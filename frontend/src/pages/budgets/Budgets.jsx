@@ -96,19 +96,16 @@ const handleUpdate = async () => {
         .map(([category_id, limit_amount]) => ({
           category_id,
           limit_amount: Number(limit_amount)
-      }))
+        }))
 
-      console.log('Enviando update:', { categories: cats })
-      console.log('editLimits:', editLimits)
-      console.log('cats:', cats)
-      const { data } = await budgetService.update(budget.id, {
-        categories: cats
-      })
+      await budgetService.update(budget.id, { categories: cats })
+
+      // Recargar el presupuesto fresco desde el backend
+      const { data } = await budgetService.getByMonth(year, month)
       setBudget(data.data)
       setShowEdit(false)
     } catch (err) {
-      console.error(err)
-      console.error('Error detalle:', JSON.stringify(err.response?.data)) // ← agrega esta línea
+      console.error('Error update:', err.response?.data)
     }
   }
 
