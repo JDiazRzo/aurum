@@ -4,6 +4,7 @@ import { profilesRouter } from '../modules/profiles/profiles.routes.js'
 import { transactionsRouter } from '../modules/transactions/transactions.routes.js'
 import { budgetsRouter } from '../modules/budgets/budgets.routes.js'
 import { categoriesRouter } from '../modules/categories/categories.routes.js'
+import { chatRouter } from '../modules/chat/chat.routes.js'
 
 export const router = Router()
 
@@ -12,3 +13,4 @@ router.use('/profiles',     profilesRouter)
 router.use('/transactions', transactionsRouter)
 router.use('/budgets',      budgetsRouter)
 router.use('/categories',   categoriesRouter)
+router.use('/chat', chatRouter)

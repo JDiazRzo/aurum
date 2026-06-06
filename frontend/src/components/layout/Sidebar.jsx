@@ -5,6 +5,7 @@ const NAV = [
   { to: '/dashboard',    icon: '◈', label: 'Dashboard'     },
   { to: '/transactions', icon: '⇅', label: 'Movimientos'   },
   { to: '/budgets',      icon: '◎', label: 'Presupuesto'   },
+  { to: '/chat',         icon: '◉', label: 'Asistente'     }, 
 ]
 
 export const Sidebar = () => {

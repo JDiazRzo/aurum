@@ -5,6 +5,7 @@ import { router } from './routes/index.js'
 import { errorHandler } from './middlewares/errorHandler.js'
 import { notFound } from './middlewares/notFound.js'
 
+
 const app = express()
 const PORT = process.env.PORT || 3000
 
@@ -19,6 +20,7 @@ app.get('/health', (_req, res) => {
 
 // ── Rutas de la API ───────────────────────────────────────────
 app.use('/api/v1', router)
+
 
 // ── Manejo de errores (siempre al final) ──────────────────────
 app.use(notFound)

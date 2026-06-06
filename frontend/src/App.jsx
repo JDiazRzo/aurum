@@ -5,6 +5,7 @@ import { Register }     from './pages/auth/Register.jsx'
 import { Dashboard }    from './pages/dashboard/Dashboard.jsx'
 import { Transactions } from './pages/transactions/Transactions.jsx'
 import { Budgets }      from './pages/budgets/Budgets.jsx'
+import { Chat } from './pages/chat/Chat.jsx'
 
 const PrivateRoute = ({ children }) => {
   const { profile, loading } = useAuth()
@@ -24,6 +25,7 @@ const App = () => (
       <Route path="/dashboard"    element={<PrivateRoute><Dashboard /></PrivateRoute>} />
       <Route path="/transactions" element={<PrivateRoute><Transactions /></PrivateRoute>} />
       <Route path="/budgets"      element={<PrivateRoute><Budgets /></PrivateRoute>} />
+      <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
       <Route path="*"             element={<Navigate to="/dashboard" replace />} />
     </Routes>
   </AuthProvider>
