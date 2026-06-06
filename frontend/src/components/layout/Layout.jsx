@@ -6,10 +6,10 @@ export const Layout = ({ children }) => (
     {/* Fondo Aurora */}
     <div className="fixed inset-0 z-0">
       <Aurora
-        colorStops={["#e8c97a", "#C9A84C", "#8a6e2e"]}
-        blend={0.8}
-        amplitude={1.0}
-        speed={1.1}
+        colorStops={["#2a1f08", "#C9A84C", "#1a1508"]}
+        blend={0.3}
+        amplitude={0.8}
+        speed={0.8}
       />
     </div>
 
