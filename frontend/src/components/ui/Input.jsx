@@ -1,11 +1,20 @@
-export const Input = ({ label, error, ...props }) => (
-  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+export const Input = ({ label, error, className = '', ...props }) => (
+  <div className="flex flex-col gap-1.5">
     {label && (
-      <label style={{ fontSize: 12, color: 'var(--text-muted)', letterSpacing: '.5px' }}>
+      <label className="text-xs text-muted tracking-wide">
         {label}
       </label>
     )}
-    <input {...props} />
-    {error && <span style={{ fontSize: 12, color: 'var(--danger)' }}>{error}</span>}
+    <input
+      className={`
+        bg-surface2 border border-border rounded-md
+        px-3.5 py-2.5 text-sm text-white
+        outline-none transition-colors duration-200
+        focus:border-gold placeholder:text-dim
+        ${className}
+      `}
+      {...props}
+    />
+    {error && <span className="text-xs text-danger">{error}</span>}
   </div>
 )

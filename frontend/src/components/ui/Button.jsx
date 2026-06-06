@@ -1,31 +1,22 @@
 const variants = {
-  primary: {
-    background: 'var(--gold)', color: '#080808',
-    border: 'none', fontWeight: 600,
-  },
-  ghost: {
-    background: 'transparent', color: 'var(--text-muted)',
-    border: '1px solid var(--border)',
-  },
-  danger: {
-    background: 'transparent', color: 'var(--danger)',
-    border: '1px solid var(--danger)',
-  },
+  primary: 'bg-gold text-black font-semibold hover:bg-gold-light',
+  ghost:   'bg-transparent text-muted border border-border hover:border-gold hover:text-gold',
+  danger:  'bg-transparent text-danger border border-danger hover:opacity-80',
 }
 
-export const Button = ({ children, variant = 'primary', loading, style, ...props }) => (
+export const Button = ({ children, variant = 'primary', loading, fullWidth, style, ...props }) => (
   <button
     disabled={loading || props.disabled}
-    style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-      padding: '10px 20px', borderRadius: 'var(--radius-md)', fontSize: 14,
-      fontFamily: 'var(--font-body)', transition: 'opacity .2s, transform .1s',
-      opacity: (loading || props.disabled) ? 0.6 : 1,
-      width: props.fullWidth ? '100%' : undefined,
-      ...variants[variant], ...style,
-    }}
-    onMouseDown={e => e.currentTarget.style.transform = 'scale(0.97)'}
-    onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+    className={`
+      flex items-center justify-center gap-2
+      px-5 py-2.5 rounded-md text-sm
+      transition-all duration-200
+      active:scale-95
+      disabled:opacity-60 disabled:cursor-not-allowed
+      ${variants[variant]}
+      ${fullWidth ? 'w-full' : ''}
+    `}
+    style={style}
     {...props}
   >
     {loading ? '...' : children}

@@ -25,50 +25,44 @@ export const TransactionForm = ({ onSubmit, onClose }) => {
       const payload = {
         ...form,
         amount: Number(form.amount),
-        // Si category_id está vacío, no lo mandamos
         category_id: form.category_id || undefined
       }
       await onSubmit(payload)
     } catch (err) {
       const errors = err.response?.data?.errors
-      if (errors?.length) {
-        setError(errors.map(e => e.message).join(', '))
-      } else {
-        setError(err.response?.data?.message || 'Error al guardar')
-      }
+      if (errors?.length) setError(errors.map(e => e.message).join(', '))
+      else setError(err.response?.data?.message || 'Error al guardar')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, background: 'rgba(0,0,0,.7)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100,
-    }} onClick={e => e.target === e.currentTarget && onClose()}>
-      <Card style={{ width: '100%', maxWidth: 440, maxHeight: '90vh', overflowY: 'auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 600 }}>Nuevo movimiento</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: 22, cursor: 'pointer' }}>×</button>
+    <div
+      className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+      onClick={e => e.target === e.currentTarget && onClose()}
+    >
+      <Card className="w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="font-display text-2xl font-semibold">Nuevo movimiento</h2>
+          <button onClick={onClose} className="text-muted text-2xl bg-transparent border-none cursor-pointer hover:text-white">×</button>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Tipo */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-            {['expense','income'].map(type => (
-              <button key={type} type="button" onClick={() => setForm(p => ({ ...p, type }))} style={{
-                padding: '10px', borderRadius: 'var(--radius-md)', fontSize: 13,
-                transition: 'all .2s', cursor: 'pointer',
-                background: form.type === type
-                  ? (type === 'expense' ? '#1f0808' : '#081f08')
-                  : 'var(--surface3)',
-                border: form.type === type
-                  ? `1px solid ${type === 'expense' ? 'var(--danger)' : 'var(--success)'}`
-                  : '1px solid var(--border)',
-                color: form.type === type
-                  ? (type === 'expense' ? 'var(--danger)' : 'var(--success)')
-                  : 'var(--text-muted)',
-              }}>
+          <div className="grid grid-cols-2 gap-2">
+            {['expense', 'income'].map(type => (
+              <button
+                key={type} type="button"
+                onClick={() => setForm(p => ({ ...p, type }))}
+                className={`py-2.5 rounded-md text-sm cursor-pointer transition-all duration-200 ${
+                  form.type === type
+                    ? type === 'expense'
+                      ? 'bg-[#1f0808] border border-danger text-danger'
+                      : 'bg-[#081f08] border border-success text-success'
+                    : 'bg-surface3 border border-border text-muted'
+                }`}
+              >
                 {type === 'expense' ? 'Gasto' : 'Ingreso'}
               </button>
             ))}
@@ -82,16 +76,18 @@ export const TransactionForm = ({ onSubmit, onClose }) => {
 
           {/* Categorías */}
           <div>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', letterSpacing: .5, marginBottom: 8 }}>Categoría</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
+            <div className="text-xs text-muted tracking-wide mb-2">Categoría</div>
+            <div className="grid grid-cols-4 gap-1.5">
               {categories.map(cat => (
-                <button key={cat.id} type="button" onClick={() => setForm(p => ({ ...p, category_id: cat.id }))} style={{
-                  padding: '8px 4px', borderRadius: 'var(--radius-md)', fontSize: 10,
-                  textAlign: 'center', cursor: 'pointer', transition: 'all .2s',
-                  background: form.category_id === cat.id ? 'var(--gold-bg)' : 'var(--surface3)',
-                  border: `1px solid ${form.category_id === cat.id ? 'var(--gold-dim)' : 'var(--border)'}`,
-                  color: form.category_id === cat.id ? 'var(--gold)' : 'var(--text-muted)',
-                }}>
+                <button
+                  key={cat.id} type="button"
+                  onClick={() => setForm(p => ({ ...p, category_id: cat.id }))}
+                  className={`py-2 px-1 rounded-md text-[10px] text-center cursor-pointer transition-all duration-200 ${
+                    form.category_id === cat.id
+                      ? 'bg-gold-bg border border-gold-dim text-gold'
+                      : 'bg-surface3 border border-border text-muted hover:border-gold hover:text-gold'
+                  }`}
+                >
                   {CATS_ICONS[cat.name] || '○'}<br />{cat.name}
                 </button>
               ))}
@@ -101,9 +97,9 @@ export const TransactionForm = ({ onSubmit, onClose }) => {
           <Input label="Fecha" type="date" value={form.transaction_date}
             onChange={e => setForm(p => ({ ...p, transaction_date: e.target.value }))} />
 
-          {error && <div style={{ fontSize: 13, color: 'var(--danger)', textAlign: 'center' }}>{error}</div>}
+          {error && <div className="text-sm text-danger text-center">{error}</div>}
 
-          <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+          <div className="flex gap-2 mt-1">
             <Button type="button" variant="ghost" onClick={onClose} style={{ flex: 1 }}>Cancelar</Button>
             <Button type="submit" loading={loading} style={{ flex: 2 }}>Guardar</Button>
           </div>

@@ -9,11 +9,9 @@ import { transactionService } from '../../services/api.js'
 import { formatCOP, formatDate, currentMonth, currentYear, MONTHS } from '../../utils/format.js'
 
 const StatCard = ({ label, amount, color, delay }) => (
-  <Card className={`fade-up-${delay}`} style={{ flex: 1 }}>
-    <div style={{ fontSize: 11, color: 'var(--text-dim)', letterSpacing: 1, marginBottom: 8 }}>
-      {label}
-    </div>
-    <div style={{ fontSize: 22, fontWeight: 500, color, fontFamily: 'var(--font-display)' }}>
+  <Card className={`fade-up-${delay} flex-1`}>
+    <div className="text-[11px] text-dim tracking-[1px] mb-2">{label}</div>
+    <div className={`text-[22px] font-medium font-display ${color}`}>
       {formatCOP(amount || 0)}
     </div>
   </Card>
@@ -31,53 +29,45 @@ export const Dashboard = () => {
     transactionService.anomalies().then(({ data }) => setAnomalies(data.data || []))
   }, [])
 
-  // Datos para la gráfica de área
-  const chartData = [
-    { mes: 'Ene', gastos: 1800000 },
-    { mes: 'Feb', gastos: 2100000 },
-    { mes: 'Mar', gastos: 1600000 },
-    { mes: 'Abr', gastos: 2400000 },
-    { mes: 'May', gastos: summary?.total_expense || 0 },
-  ]
+  const chartData = summary?.by_category
+  ? Object.entries(summary.by_category).map(([name, amount]) => ({
+      mes: name,
+      gastos: amount
+    }))
+  : [{ mes: MONTHS[month - 1], gastos: summary?.total_expense || 0 }]
 
   return (
     <Layout>
       {/* Header */}
-      <div className="fade-up" style={{ marginBottom: '2rem' }}>
-        <div style={{ fontSize: 13, color: 'var(--text-dim)', marginBottom: 4 }}>
-          Bienvenido de nuevo
-        </div>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 600, color: 'var(--text)' }}>
+      <div className="fade-up mb-8">
+        <div className="text-sm text-dim mb-1">Bienvenido de nuevo</div>
+        <h1 className="font-display text-4xl font-semibold text-white">
           {profile?.full_name || 'Usuario'}
         </h1>
-        <div style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 4 }}>
-          {MONTHS[month - 1]} {year}
-        </div>
+        <div className="text-sm text-muted mt-1">{MONTHS[month - 1]} {year}</div>
       </div>
 
       {/* Balance principal */}
-      <Card className="fade-up-1" style={{ marginBottom: '1.5rem', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: -40, right: -40, width: 150, height: 150, borderRadius: '50%', background: 'var(--gold)', opacity: .03 }} />
-        <div style={{ fontSize: 12, color: 'var(--text-dim)', letterSpacing: 1, marginBottom: 8 }}>BALANCE DEL MES</div>
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 48, fontWeight: 700, color: 'var(--gold)', letterSpacing: -1 }}>
+      <Card className="fade-up-1 mb-6 relative overflow-hidden">
+        <div className="absolute -top-10 -right-10 w-36 h-36 rounded-full bg-gold opacity-[0.03]" />
+        <div className="text-xs text-dim tracking-[1px] mb-2">BALANCE DEL MES</div>
+        <div className="font-display text-5xl font-bold text-gold tracking-tight">
           {formatCOP(summary?.balance || 0)}
         </div>
-        <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 6 }}>
-          {summary?.balance >= 0 ? '↑ Positivo' : '↓ Negativo'} este mes
+        <div className="text-sm text-muted mt-1.5">
+          {(summary?.balance || 0) >= 0 ? '↑ Positivo' : '↓ Negativo'} este mes
         </div>
       </Card>
 
       {/* Stats */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-        <StatCard label="INGRESOS" amount={summary?.total_income}  color="var(--success)" delay={2} />
-        <StatCard label="GASTOS"   amount={summary?.total_expense} color="var(--danger)"  delay={3} />
+      <div className="flex gap-4 mb-6">
+        <StatCard label="INGRESOS" amount={summary?.total_income}  color="text-success" delay={2} />
+        <StatCard label="GASTOS"   amount={summary?.total_expense} color="text-danger"  delay={3} />
       </div>
 
       {/* Gráfica */}
-      <Card className="fade-up-4" style={{ marginBottom: '1.5rem' }}>
-        <div style={{ fontSize: 12, color: 'var(--text-dim)', letterSpacing: 1, marginBottom: '1rem' }}>
-          TENDENCIA DE GASTOS
-        </div>
+      <Card className="fade-up-4 mb-6">
+        <div className="text-xs text-dim tracking-[1px] mb-4">TENDENCIA DE GASTOS</div>
         <ResponsiveContainer width="100%" height={180}>
           <AreaChart data={chartData}>
             <defs>
@@ -89,36 +79,32 @@ export const Dashboard = () => {
             <XAxis dataKey="mes" tick={{ fill: '#7a6e52', fontSize: 11 }} axisLine={false} tickLine={false} />
             <YAxis hide />
             <Tooltip
-              contentStyle={{ background: 'var(--surface3)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }}
+              contentStyle={{ background: '#1c1a0f', border: '1px solid #2a2410', borderRadius: 8, fontSize: 12 }}
               formatter={(v) => [formatCOP(v), 'Gastos']}
-              labelStyle={{ color: 'var(--text-muted)' }}
+              labelStyle={{ color: '#7a6e52' }}
             />
             <Area type="monotone" dataKey="gastos" stroke="#C9A84C" strokeWidth={2} fill="url(#goldGrad)" />
           </AreaChart>
         </ResponsiveContainer>
       </Card>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+      <div className="grid grid-cols-2 gap-4">
         {/* Últimos movimientos */}
         <Card>
-          <div style={{ fontSize: 12, color: 'var(--text-dim)', letterSpacing: 1, marginBottom: '1rem' }}>
-            ÚLTIMOS MOVIMIENTOS
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div className="text-xs text-dim tracking-[1px] mb-4">ÚLTIMOS MOVIMIENTOS</div>
+          <div className="flex flex-col gap-2.5">
             {transactions.length === 0 && (
-              <div style={{ fontSize: 13, color: 'var(--text-dim)', textAlign: 'center', padding: '1rem 0' }}>
-                Sin movimientos este mes
-              </div>
+              <div className="text-sm text-dim text-center py-4">Sin movimientos este mes</div>
             )}
             {transactions.map(tx => (
-              <div key={tx.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div key={tx.id} className="flex justify-between items-center">
                 <div>
-                  <div style={{ fontSize: 13, color: 'var(--text)' }}>{tx.description || 'Sin descripción'}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-dim)', marginTop: 2 }}>
+                  <div className="text-sm text-white">{tx.description || 'Sin descripción'}</div>
+                  <div className="text-[11px] text-dim mt-0.5">
                     {tx.categories?.name} · {formatDate(tx.transaction_date)}
                   </div>
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 500, color: tx.type === 'income' ? 'var(--success)' : 'var(--danger)' }}>
+                <div className={`text-sm font-medium ${tx.type === 'income' ? 'text-success' : 'text-danger'}`}>
                   {tx.type === 'income' ? '+' : '-'}{formatCOP(tx.amount)}
                 </div>
               </div>
@@ -128,22 +114,18 @@ export const Dashboard = () => {
 
         {/* Anomalías */}
         <Card>
-          <div style={{ fontSize: 12, color: 'var(--text-dim)', letterSpacing: 1, marginBottom: '1rem' }}>
-            GASTOS INUSUALES
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div className="text-xs text-dim tracking-[1px] mb-4">GASTOS INUSUALES</div>
+          <div className="flex flex-col gap-2.5">
             {anomalies.length === 0 && (
-              <div style={{ fontSize: 13, color: 'var(--success)', textAlign: 'center', padding: '1rem 0' }}>
-                ✓ Sin alertas este mes
-              </div>
+              <div className="text-sm text-success text-center py-4">✓ Sin alertas este mes</div>
             )}
             {anomalies.slice(0, 4).map(tx => (
-              <div key={tx.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div key={tx.id} className="flex justify-between items-center">
                 <div>
-                  <div style={{ fontSize: 13, color: 'var(--text)' }}>{tx.description || 'Sin descripción'}</div>
-                  <Badge variant="warn" style={{ marginTop: 3 }}>⚠ {tx.reason}</Badge>
+                  <div className="text-sm text-white">{tx.description || 'Sin descripción'}</div>
+                  <Badge variant="warn" className="mt-1">⚠ {tx.reason}</Badge>
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--danger)' }}>
+                <div className="text-sm font-medium text-danger">
                   -{formatCOP(tx.amount)}
                 </div>
               </div>

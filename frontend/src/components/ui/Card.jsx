@@ -1,11 +1,9 @@
-export const Card = ({ children, style, ...props }) => (
-  <div style={{
-    background: 'var(--surface2)',
-    border: '1px solid var(--border)',
-    borderRadius: 'var(--radius-lg)',
-    padding: '1.25rem',
-    ...style,
-  }} {...props}>
+export const Card = ({ children, className = '', style, ...props }) => (
+  <div
+    className={`bg-surface2 border border-border rounded-lg p-5 ${className}`}
+    style={style}
+    {...props}
+  >
     {children}
   </div>
 )

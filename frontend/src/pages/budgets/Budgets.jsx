@@ -7,10 +7,10 @@ import { formatCOP, currentMonth, currentYear, MONTHS } from '../../utils/format
 
 const ProgressBar = ({ value, max }) => {
   const pct = Math.min((value / max) * 100, 100)
-  const color = pct >= 100 ? 'var(--danger)' : pct >= 80 ? 'var(--warn)' : 'var(--gold)'
+  const color = pct >= 100 ? 'bg-danger' : pct >= 80 ? 'bg-warn' : 'bg-gold'
   return (
-    <div style={{ height: 5, background: 'var(--border)', borderRadius: 3, overflow: 'hidden', marginTop: 8 }}>
-      <div style={{ height: '100%', width: `${pct}%`, background: color, borderRadius: 3, transition: 'width .5s ease' }} />
+    <div className="h-1.5 bg-border rounded-full overflow-hidden mt-2">
+      <div className={`h-full rounded-full transition-all duration-500 ${color}`} style={{ width: `${pct}%` }} />
     </div>
   )
 }
@@ -19,11 +19,11 @@ export const Budgets = () => {
   const [budget,     setBudget]     = useState(null)
   const [loading,    setLoading]    = useState(true)
   const [showForm,   setShowForm]   = useState(false)
-  const [showEdit,  setShowEdit]  = useState(false)
-  const [editLimits, setEditLimits] = useState({})
+  const [showEdit,   setShowEdit]   = useState(false)
   const [formError,  setFormError]  = useState('')
   const [categories, setCategories] = useState([])
   const [catLimits,  setCatLimits]  = useState({})
+  const [editLimits, setEditLimits] = useState({})
   const [month] = useState(currentMonth())
   const [year]  = useState(currentYear())
   const [newBudget, setNewBudget] = useState({ total_amount: '', month, year })
@@ -37,10 +37,7 @@ export const Budgets = () => {
 
   useEffect(() => {
     categoryService.getAll()
-      .then(({ data }) => {
-        console.log('Categorías:', data)
-        setCategories(data.data || [])
-      })
+      .then(({ data }) => setCategories(data.data || []))
       .catch(err => console.log('Error categorías:', err))
   }, [])
 
@@ -50,15 +47,10 @@ export const Budgets = () => {
     try {
       const cats = Object.entries(catLimits)
         .filter(([_, v]) => v && Number(v) > 0)
-        .map(([category_id, limit_amount]) => ({
-          category_id,
-          limit_amount: Number(limit_amount)
-        }))
+        .map(([category_id, limit_amount]) => ({ category_id, limit_amount: Number(limit_amount) }))
       const { data } = await budgetService.create({
         total_amount: Number(newBudget.total_amount),
-        month:        newBudget.month,
-        year:         newBudget.year,
-        categories:   cats
+        month: newBudget.month, year: newBudget.year, categories: cats
       })
       setBudget(data.data)
       setShowForm(false)
@@ -73,67 +65,112 @@ export const Budgets = () => {
     try {
       await budgetService.remove(budget.id)
       setBudget(null)
-    } catch (err) {
-      console.error(err)
-    }
+    } catch (err) { console.error(err) }
   }
-  
-  const handleEdit = () => {
-  console.log('budget_categories:', budget.budget_categories) 
-  // Pre-llenar con los límites actuales
-  const current = {}
-  budget.budget_categories?.forEach(bc => {
-    current[bc.category_id] = bc.limit_amount
-  })
-  setEditLimits(current)
-  setShowEdit(true)
-}
 
-const handleUpdate = async () => {
+  const handleEdit = () => {
+    const current = {}
+    budget.budget_categories?.forEach(bc => { current[bc.category_id] = bc.limit_amount })
+    setEditLimits(current)
+    setShowEdit(true)
+  }
+
+  const handleUpdate = async () => {
     try {
       const cats = Object.entries(editLimits)
         .filter(([_, v]) => v && Number(v) > 0)
-        .map(([category_id, limit_amount]) => ({
-          category_id,
-          limit_amount: Number(limit_amount)
-        }))
-
+        .map(([category_id, limit_amount]) => ({ category_id, limit_amount: Number(limit_amount) }))
       await budgetService.update(budget.id, { categories: cats })
-
-      // Recargar el presupuesto fresco desde el backend
       const { data } = await budgetService.getByMonth(year, month)
       setBudget(data.data)
       setShowEdit(false)
-    } catch (err) {
-      console.error('Error update:', err.response?.data)
-    }
+    } catch (err) { console.error(err) }
   }
 
-  if (loading) return <Layout><div style={{ color: 'var(--text-dim)', padding: '2rem' }}>Cargando...</div></Layout>
+  const inputClass = "w-full bg-surface2 border border-border rounded-md px-3 py-2 text-sm text-white outline-none focus:border-gold"
+  const selectClass = "w-full bg-surface2 border border-border rounded-md px-3 py-2 text-sm text-white outline-none focus:border-gold"
+
+  if (loading) return <Layout><div className="text-dim p-8">Cargando...</div></Layout>
+
+  const Modal = ({ title, onClose, onSave, limits, setLimits, isCreate }) => (
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+      onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="bg-surface2 border border-border rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <h2 className="font-display text-2xl font-semibold mb-6">{title}</h2>
+        <div className="flex flex-col gap-4">
+          {isCreate && (
+            <>
+              <div>
+                <label className="text-xs text-muted mb-1.5 block">Monto total del mes</label>
+                <input type="number" placeholder="$0" className={inputClass}
+                  value={newBudget.total_amount}
+                  onChange={e => setNewBudget(p => ({ ...p, total_amount: e.target.value }))} />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-xs text-muted mb-1.5 block">Mes</label>
+                  <select className={selectClass} value={newBudget.month}
+                    onChange={e => setNewBudget(p => ({ ...p, month: Number(e.target.value) }))}>
+                    {MONTHS.map((m, i) => <option key={i+1} value={i+1}>{m}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-muted mb-1.5 block">Año</label>
+                  <select className={selectClass} value={newBudget.year}
+                    onChange={e => setNewBudget(p => ({ ...p, year: Number(e.target.value) }))}>
+                    {[2025, 2026, 2027].map(y => <option key={y} value={y}>{y}</option>)}
+                  </select>
+                </div>
+              </div>
+            </>
+          )}
+          <div>
+            <label className="text-xs text-muted mb-2 block">Límites por categoría {isCreate && '(opcional)'}</label>
+            <div className="flex flex-col gap-2">
+              {categories.length === 0 && (
+                <div className="text-xs text-dim">Cargando categorías...</div>
+              )}
+              {categories.map(cat => (
+                <div key={cat.id} className="flex items-center gap-2">
+                  <span className="text-sm text-muted w-28 flex-shrink-0">{cat.name}</span>
+                  <input type="number" placeholder="$0" className={inputClass}
+                    value={limits[cat.id] || ''}
+                    onChange={e => setLimits(p => ({ ...p, [cat.id]: e.target.value }))} />
+                </div>
+              ))}
+            </div>
+          </div>
+          {isCreate && formError && <div className="text-sm text-danger">{formError}</div>}
+          <div className="flex gap-2 mt-1">
+            <button onClick={onClose}
+              className="flex-1 py-2.5 rounded-md bg-transparent border border-border text-muted cursor-pointer hover:border-gold hover:text-gold transition-all">
+              Cancelar
+            </button>
+            <button onClick={onSave}
+              className="flex-[2] py-2.5 rounded-md bg-gold border-none text-black font-semibold cursor-pointer hover:bg-gold-light transition-all">
+              {isCreate ? 'Crear' : 'Guardar cambios'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 
   return (
     <Layout>
-      <div className="fade-up" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div className="fade-up flex justify-between items-start mb-8">
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 600 }}>Presupuesto</h1>
-          <div style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 4 }}>
-            {MONTHS[month - 1]} {year}
-          </div>
+          <h1 className="font-display text-4xl font-semibold">Presupuesto</h1>
+          <div className="text-sm text-muted mt-1">{MONTHS[month - 1]} {year}</div>
         </div>
         {budget && (
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={handleEdit} style={{
-              padding: '8px 16px', borderRadius: 'var(--radius-md)',
-              background: 'transparent', border: '1px solid var(--gold)',
-              color: 'var(--gold)', cursor: 'pointer', fontSize: 13
-            }}>
+          <div className="flex gap-2">
+            <button onClick={handleEdit}
+              className="px-4 py-2 rounded-md bg-transparent border border-gold text-gold text-sm cursor-pointer hover:bg-gold-bg transition-all">
               Editar
             </button>
-            <button onClick={handleDelete} style={{
-              padding: '8px 16px', borderRadius: 'var(--radius-md)',
-              background: 'transparent', border: '1px solid var(--danger)',
-              color: 'var(--danger)', cursor: 'pointer', fontSize: 13
-            }}>
+            <button onClick={handleDelete}
+              className="px-4 py-2 rounded-md bg-transparent border border-danger text-danger text-sm cursor-pointer hover:opacity-80 transition-all">
               Eliminar
             </button>
           </div>
@@ -141,37 +178,33 @@ const handleUpdate = async () => {
       </div>
 
       {!budget ? (
-        <Card className="fade-up-1" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
-          <div style={{ fontSize: 32, marginBottom: '1rem' }}>◎</div>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: 22, color: 'var(--text)', marginBottom: 8 }}>
-            Sin presupuesto este mes
-          </div>
-          <div style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-            Define cuánto quieres gastar en {MONTHS[month - 1]}
-          </div>
+        <Card className="fade-up-1 text-center py-16 px-8">
+          <div className="text-4xl mb-4">◎</div>
+          <div className="font-display text-2xl text-white mb-2">Sin presupuesto este mes</div>
+          <div className="text-sm text-muted mb-6">Define cuánto quieres gastar en {MONTHS[month - 1]}</div>
           <Button style={{ margin: '0 auto' }} onClick={() => setShowForm(true)}>
             Crear presupuesto
           </Button>
         </Card>
       ) : (
         <>
-          <Card className="fade-up-1" style={{ marginBottom: '1.5rem', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: -40, right: -40, width: 150, height: 150, borderRadius: '50%', background: 'var(--gold)', opacity: .03 }} />
-            <div style={{ fontSize: 12, color: 'var(--text-dim)', letterSpacing: 1, marginBottom: 8 }}>DISPONIBLE DEL MES</div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: 42, fontWeight: 700, color: 'var(--gold)' }}>
+          <Card className="fade-up-1 mb-6 relative overflow-hidden">
+            <div className="absolute -top-10 -right-10 w-36 h-36 rounded-full bg-gold opacity-[0.03]" />
+            <div className="text-xs text-dim tracking-[1px] mb-2">DISPONIBLE DEL MES</div>
+            <div className="font-display text-5xl font-bold text-gold">
               {formatCOP(budget.remaining || 0)}
             </div>
             <ProgressBar value={budget.total_spent || 0} max={budget.total_amount} />
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
-              <span style={{ fontSize: 12, color: 'var(--text-dim)' }}>Gastado: {formatCOP(budget.total_spent || 0)}</span>
-              <span style={{ fontSize: 12, color: 'var(--text-dim)' }}>Total: {formatCOP(budget.total_amount)}</span>
+            <div className="flex justify-between mt-2">
+              <span className="text-xs text-dim">Gastado: {formatCOP(budget.total_spent || 0)}</span>
+              <span className="text-xs text-dim">Total: {formatCOP(budget.total_amount)}</span>
             </div>
           </Card>
 
-          <div style={{ fontSize: 12, color: 'var(--text-dim)', letterSpacing: 1, marginBottom: '1rem' }}>POR CATEGORÍA</div>
-          <div className="fade-up-3" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div className="text-xs text-dim tracking-[1px] mb-4">POR CATEGORÍA</div>
+          <div className="fade-up-3 flex flex-col gap-2.5">
             {(budget.budget_categories || []).length === 0 && (
-              <Card style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-dim)', fontSize: 13 }}>
+              <Card className="text-center py-8 text-sm text-dim">
                 Sin límites por categoría definidos
               </Card>
             )}
@@ -179,15 +212,15 @@ const handleUpdate = async () => {
               const pct  = Math.round((bc.spent_amount / bc.limit_amount) * 100)
               const over = bc.spent_amount > bc.limit_amount
               return (
-                <Card key={bc.id} style={{ padding: '1rem 1.25rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ fontSize: 14, color: 'var(--text)' }}>{bc.categories?.name || 'Categoría'}</div>
-                    <div style={{ fontSize: 13, color: over ? 'var(--danger)' : 'var(--text-muted)' }}>
+                <Card key={bc.id} className="py-4 px-5">
+                  <div className="flex justify-between items-center">
+                    <div className="text-sm text-white">{bc.categories?.name || 'Categoría'}</div>
+                    <div className={`text-sm ${over ? 'text-danger' : 'text-muted'}`}>
                       {formatCOP(bc.spent_amount)} / {formatCOP(bc.limit_amount)}
                     </div>
                   </div>
                   <ProgressBar value={bc.spent_amount} max={bc.limit_amount} />
-                  <div style={{ fontSize: 11, marginTop: 6, color: over ? 'var(--danger)' : 'var(--text-dim)' }}>
+                  <div className={`text-[11px] mt-1.5 ${over ? 'text-danger' : 'text-dim'}`}>
                     {over
                       ? `Excedido en ${formatCOP(bc.spent_amount - bc.limit_amount)}`
                       : `${pct}% usado · ${formatCOP(bc.limit_amount - bc.spent_amount)} restantes`}
@@ -200,131 +233,25 @@ const handleUpdate = async () => {
       )}
 
       {showForm && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,.7)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100,
-        }} onClick={e => e.target === e.currentTarget && setShowForm(false)}>
-          <div style={{
-            background: 'var(--surface2)', border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-lg)', padding: '1.5rem', width: '100%', maxWidth: 420,
-            maxHeight: '90vh', overflowY: 'auto'
-          }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, marginBottom: '1.5rem' }}>
-              Nuevo presupuesto
-            </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div>
-                <label style={{ fontSize: 12, color: 'var(--text-muted)' }}>Monto total del mes</label>
-                <input type="number" placeholder="$0"
-                  value={newBudget.total_amount}
-                  onChange={e => setNewBudget(p => ({ ...p, total_amount: e.target.value }))}
-                  style={{ marginTop: 6 }}
-                />
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                <div>
-                  <label style={{ fontSize: 12, color: 'var(--text-muted)' }}>Mes</label>
-                  <select value={newBudget.month}
-                    onChange={e => setNewBudget(p => ({ ...p, month: Number(e.target.value) }))}
-                    style={{ marginTop: 6 }}>
-                    {MONTHS.map((m, i) => <option key={i+1} value={i+1}>{m}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label style={{ fontSize: 12, color: 'var(--text-muted)' }}>Año</label>
-                  <select value={newBudget.year}
-                    onChange={e => setNewBudget(p => ({ ...p, year: Number(e.target.value) }))}
-                    style={{ marginTop: 6 }}>
-                    {[2025, 2026, 2027].map(y => <option key={y} value={y}>{y}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8, display: 'block' }}>
-                  Límites por categoría (opcional)
-                </label>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {categories.length === 0 && (
-                    <div style={{ fontSize: 12, color: 'var(--text-dim)' }}>Cargando categorías...</div>
-                  )}
-                  {categories.map(cat => (
-                    <div key={cat.id} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 13, color: 'var(--text-muted)', width: 110, flexShrink: 0 }}>
-                        {cat.name}
-                      </span>
-                      <input type="number" placeholder="$0"
-                        value={catLimits[cat.id] || ''}
-                        onChange={e => setCatLimits(p => ({ ...p, [cat.id]: e.target.value }))}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-              {formError && <div style={{ fontSize: 13, color: 'var(--danger)' }}>{formError}</div>}
-              <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-                <button onClick={() => setShowForm(false)} style={{
-                  flex: 1, padding: '10px', borderRadius: 'var(--radius-md)',
-                  background: 'transparent', border: '1px solid var(--border)',
-                  color: 'var(--text-muted)', cursor: 'pointer'
-                }}>Cancelar</button>
-                <button onClick={handleCreate} style={{
-                  flex: 2, padding: '10px', borderRadius: 'var(--radius-md)',
-                  background: 'var(--gold)', border: 'none',
-                  color: '#080808', fontWeight: 600, cursor: 'pointer'
-                }}>Crear</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Modal
+          title="Nuevo presupuesto"
+          onClose={() => setShowForm(false)}
+          onSave={handleCreate}
+          limits={catLimits}
+          setLimits={setCatLimits}
+          isCreate={true}
+        />
       )}
 
       {showEdit && (
-        <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,.7)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100,
-        }} onClick={e => e.target === e.currentTarget && setShowEdit(false)}>
-          <div style={{
-            background: 'var(--surface2)', border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-lg)', padding: '1.5rem', width: '100%', maxWidth: 420,
-            maxHeight: '90vh', overflowY: 'auto'
-          }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, marginBottom: '1.5rem' }}>
-              Editar presupuesto
-            </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div>
-                <label style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8, display: 'block' }}>
-                  Límites por categoría
-                </label>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {categories.map(cat => (
-                    <div key={cat.id} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 13, color: 'var(--text-muted)', width: 110, flexShrink: 0 }}>
-                        {cat.name}
-                      </span>
-                      <input type="number" placeholder="$0"
-                        value={editLimits[cat.id] || ''}
-                        onChange={e => setEditLimits(p => ({ ...p, [cat.id]: e.target.value }))}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-                <button onClick={() => setShowEdit(false)} style={{
-                  flex: 1, padding: '10px', borderRadius: 'var(--radius-md)',
-                  background: 'transparent', border: '1px solid var(--border)',
-                  color: 'var(--text-muted)', cursor: 'pointer'
-                }}>Cancelar</button>
-                <button onClick={handleUpdate} style={{
-                  flex: 2, padding: '10px', borderRadius: 'var(--radius-md)',
-                  background: 'var(--gold)', border: 'none',
-                  color: '#080808', fontWeight: 600, cursor: 'pointer'
-                }}>Guardar cambios</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Modal
+          title="Editar presupuesto"
+          onClose={() => setShowEdit(false)}
+          onSave={handleUpdate}
+          limits={editLimits}
+          setLimits={setEditLimits}
+          isCreate={false}
+        />
       )}
     </Layout>
   )

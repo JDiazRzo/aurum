@@ -19,33 +19,31 @@ export const Login = () => {
       await login(form)
       navigate('/dashboard')
     } catch (err) {
-      setError(err.response?.data?.message || 'Credenciales incorrectas')
+      const errors = err.response?.data?.errors
+      if (errors?.length) setError(errors.map(e => e.message).join(', '))
+      else setError(err.response?.data?.message || 'Credenciales incorrectas')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div style={{
-      minHeight: '100vh', display: 'flex',
-      alignItems: 'center', justifyContent: 'center',
-      background: 'var(--black)',
-    }}>
-      <div className="fade-up" style={{ width: '100%', maxWidth: 380, padding: '0 1.5rem' }}>
+    <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="fade-up w-full max-w-sm px-6">
         {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: 42, color: 'var(--gold)', letterSpacing: 6, fontWeight: 700 }}>
+        <div className="text-center mb-10">
+          <div className="font-display text-5xl text-gold tracking-[6px] font-bold">
             AURUM
           </div>
-          <div style={{ fontSize: 12, color: 'var(--text-dim)', letterSpacing: 2, marginTop: 4 }}>
+          <div className="text-xs text-dim tracking-[2px] mt-1">
             ASISTENTE FINANCIERO PERSONAL
           </div>
         </div>
 
         {/* Línea decorativa */}
-        <div style={{ height: 1, background: `linear-gradient(90deg, transparent, var(--gold), transparent)`, marginBottom: '2rem' }} />
+        <div className="h-px mb-8" style={{ background: 'linear-gradient(90deg, transparent, #C9A84C, transparent)' }} />
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <Input
             label="Correo electrónico"
             type="email"
@@ -62,19 +60,15 @@ export const Login = () => {
             onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
             required
           />
-          {error && (
-            <div style={{ fontSize: 13, color: 'var(--danger)', textAlign: 'center' }}>
-              {error}
-            </div>
-          )}
-          <Button type="submit" loading={loading} style={{ marginTop: 8, width: '100%', padding: '13px' }}>
+          {error && <div className="text-sm text-danger text-center">{error}</div>}
+          <Button type="submit" loading={loading} fullWidth style={{ marginTop: 8, padding: '13px' }}>
             Iniciar sesión
           </Button>
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: 13, color: 'var(--text-dim)' }}>
+        <div className="text-center mt-6 text-sm text-dim">
           ¿No tienes cuenta?{' '}
-          <Link to="/register" style={{ color: 'var(--gold)', textDecoration: 'none' }}>
+          <Link to="/register" className="text-gold no-underline hover:text-gold-light">
             Regístrate
           </Link>
         </div>
