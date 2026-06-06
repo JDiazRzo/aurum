@@ -98,7 +98,8 @@ const handleUpdate = async () => {
       }))
 
       console.log('Enviando update:', { categories: cats })
-
+      console.log('editLimits:', editLimits)
+      console.log('cats:', cats)
       const { data } = await budgetService.update(budget.id, {
         categories: cats
       })
