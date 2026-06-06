@@ -18,9 +18,9 @@ export const getBudgets = async (authUserId) => {
   const { data, error } = await supabase
     .from('budgets')
     .select(`
-      id, total_amount, month, year, created_at,
+      id, total_amount, month, year,
       budget_categories (
-        id, limit_amount, spent_amount,
+        id, category_id, limit_amount, spent_amount,
         categories ( id, name, icon, color )
       )
     `)
@@ -41,7 +41,7 @@ export const getBudgetByMonth = async (authUserId, month, year) => {
     .select(`
       id, total_amount, month, year,
       budget_categories (
-        id, limit_amount, spent_amount,
+        id, category_id, limit_amount, spent_amount,
         categories ( id, name, icon, color )
       )
     `)
