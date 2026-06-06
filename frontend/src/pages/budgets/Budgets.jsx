@@ -15,6 +15,16 @@ const ProgressBar = ({ value, max }) => {
   )
 }
 
+
+useEffect(() => {
+  categoryService.getAll()
+    .then(({ data }) => {
+      console.log('Categorías:', data)
+      setCategories(data.data || [])
+    })
+}, [])
+
+
 export const Budgets = () => {
   const [budget,     setBudget]     = useState(null)
   const [loading,    setLoading]    = useState(true)
