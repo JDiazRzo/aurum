@@ -186,7 +186,7 @@ export const getAnomalies = async (authUserId) => {
   }))
 
   try {
-    const response = await fetch('http://localhost:8000/analyze', {
+    const response = await fetch(`${process.env.PYTHON_SERVICE_URL || 'http://localhost:8000'}/analyze`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ transactions })
