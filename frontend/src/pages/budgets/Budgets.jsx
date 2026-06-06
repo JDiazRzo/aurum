@@ -5,6 +5,9 @@ import { Button } from '../../components/ui/Button.jsx'
 import { budgetService, categoryService } from '../../services/api.js'
 import { formatCOP, currentMonth, currentYear, MONTHS } from '../../utils/format.js'
 
+const inputClass = "w-full bg-surface2 border border-border rounded-md px-3 py-2 text-sm text-white outline-none focus:border-gold"
+const selectClass = "w-full bg-surface2 border border-border rounded-md px-3 py-2 text-sm text-white outline-none focus:border-gold"
+
 const ProgressBar = ({ value, max }) => {
   const pct = Math.min((value / max) * 100, 100)
   const color = pct >= 100 ? 'bg-danger' : pct >= 80 ? 'bg-warn' : 'bg-gold'
@@ -14,6 +17,70 @@ const ProgressBar = ({ value, max }) => {
     </div>
   )
 }
+
+const Modal = ({ title, onClose, onSave, limits, setLimits, isCreate, newBudget, setNewBudget, categories, formError }) => (
+  <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+    onClick={e => e.target === e.currentTarget && onClose()}>
+    <div className="bg-surface2 border border-border rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <h2 className="font-display text-2xl font-semibold mb-6">{title}</h2>
+      <div className="flex flex-col gap-4">
+        {isCreate && (
+          <>
+            <div>
+              <label className="text-xs text-muted mb-1.5 block">Monto total del mes</label>
+              <input type="number" placeholder="$0" className={inputClass}
+                value={newBudget.total_amount}
+                onChange={e => setNewBudget(p => ({ ...p, total_amount: e.target.value }))} />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="text-xs text-muted mb-1.5 block">Mes</label>
+                <select className={selectClass} value={newBudget.month}
+                  onChange={e => setNewBudget(p => ({ ...p, month: Number(e.target.value) }))}>
+                  {MONTHS.map((m, i) => <option key={i+1} value={i+1}>{m}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs text-muted mb-1.5 block">Año</label>
+                <select className={selectClass} value={newBudget.year}
+                  onChange={e => setNewBudget(p => ({ ...p, year: Number(e.target.value) }))}>
+                  {[2025, 2026, 2027].map(y => <option key={y} value={y}>{y}</option>)}
+                </select>
+              </div>
+            </div>
+          </>
+        )}
+        <div>
+          <label className="text-xs text-muted mb-2 block">Límites por categoría {isCreate && '(opcional)'}</label>
+          <div className="flex flex-col gap-2">
+            {categories.length === 0 && (
+              <div className="text-xs text-dim">Cargando categorías...</div>
+            )}
+            {categories.map(cat => (
+              <div key={cat.id} className="flex items-center gap-2">
+                <span className="text-sm text-muted w-28 flex-shrink-0">{cat.name}</span>
+                <input type="number" placeholder="$0" className={inputClass}
+                  value={limits[cat.id] || ''}
+                  onChange={e => setLimits(p => ({ ...p, [cat.id]: e.target.value }))} />
+              </div>
+            ))}
+          </div>
+        </div>
+        {isCreate && formError && <div className="text-sm text-danger">{formError}</div>}
+        <div className="flex gap-2 mt-1">
+          <button onClick={onClose}
+            className="flex-1 py-2.5 rounded-md bg-transparent border border-border text-muted cursor-pointer hover:border-gold hover:text-gold transition-all">
+            Cancelar
+          </button>
+          <button onClick={onSave}
+            className="flex-[2] py-2.5 rounded-md bg-gold border-none text-black font-semibold cursor-pointer hover:bg-gold-light transition-all">
+            {isCreate ? 'Crear' : 'Guardar cambios'}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)
 
 export const Budgets = () => {
   const [budget,     setBudget]     = useState(null)
@@ -87,74 +154,7 @@ export const Budgets = () => {
     } catch (err) { console.error(err) }
   }
 
-  const inputClass = "w-full bg-surface2 border border-border rounded-md px-3 py-2 text-sm text-white outline-none focus:border-gold"
-  const selectClass = "w-full bg-surface2 border border-border rounded-md px-3 py-2 text-sm text-white outline-none focus:border-gold"
-
   if (loading) return <Layout><div className="text-dim p-8">Cargando...</div></Layout>
-
-  const Modal = ({ title, onClose, onSave, limits, setLimits, isCreate }) => (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
-      onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="bg-surface2 border border-border rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <h2 className="font-display text-2xl font-semibold mb-6">{title}</h2>
-        <div className="flex flex-col gap-4">
-          {isCreate && (
-            <>
-              <div>
-                <label className="text-xs text-muted mb-1.5 block">Monto total del mes</label>
-                <input type="number" placeholder="$0" className={inputClass}
-                  value={newBudget.total_amount}
-                  onChange={e => setNewBudget(p => ({ ...p, total_amount: e.target.value }))} />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="text-xs text-muted mb-1.5 block">Mes</label>
-                  <select className={selectClass} value={newBudget.month}
-                    onChange={e => setNewBudget(p => ({ ...p, month: Number(e.target.value) }))}>
-                    {MONTHS.map((m, i) => <option key={i+1} value={i+1}>{m}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-xs text-muted mb-1.5 block">Año</label>
-                  <select className={selectClass} value={newBudget.year}
-                    onChange={e => setNewBudget(p => ({ ...p, year: Number(e.target.value) }))}>
-                    {[2025, 2026, 2027].map(y => <option key={y} value={y}>{y}</option>)}
-                  </select>
-                </div>
-              </div>
-            </>
-          )}
-          <div>
-            <label className="text-xs text-muted mb-2 block">Límites por categoría {isCreate && '(opcional)'}</label>
-            <div className="flex flex-col gap-2">
-              {categories.length === 0 && (
-                <div className="text-xs text-dim">Cargando categorías...</div>
-              )}
-              {categories.map(cat => (
-                <div key={cat.id} className="flex items-center gap-2">
-                  <span className="text-sm text-muted w-28 flex-shrink-0">{cat.name}</span>
-                  <input type="number" placeholder="$0" className={inputClass}
-                    value={limits[cat.id] || ''}
-                    onChange={e => setLimits(p => ({ ...p, [cat.id]: e.target.value }))} />
-                </div>
-              ))}
-            </div>
-          </div>
-          {isCreate && formError && <div className="text-sm text-danger">{formError}</div>}
-          <div className="flex gap-2 mt-1">
-            <button onClick={onClose}
-              className="flex-1 py-2.5 rounded-md bg-transparent border border-border text-muted cursor-pointer hover:border-gold hover:text-gold transition-all">
-              Cancelar
-            </button>
-            <button onClick={onSave}
-              className="flex-[2] py-2.5 rounded-md bg-gold border-none text-black font-semibold cursor-pointer hover:bg-gold-light transition-all">
-              {isCreate ? 'Crear' : 'Guardar cambios'}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
 
   return (
     <Layout>
@@ -240,6 +240,10 @@ export const Budgets = () => {
           limits={catLimits}
           setLimits={setCatLimits}
           isCreate={true}
+          newBudget={newBudget}
+          setNewBudget={setNewBudget}
+          categories={categories}
+          formError={formError}
         />
       )}
 
@@ -251,6 +255,10 @@ export const Budgets = () => {
           limits={editLimits}
           setLimits={setEditLimits}
           isCreate={false}
+          newBudget={newBudget}
+          setNewBudget={setNewBudget}
+          categories={categories}
+          formError={formError}
         />
       )}
     </Layout>
