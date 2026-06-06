@@ -95,7 +95,7 @@ export const createBudget = async (authUserId, body) => {
     if (bcError) throw new AppError(bcError.message, 400)
   }
 
-  return budget
+  return getBudgetByMonth(authUserId, month, year)
 }
 
 // Actualizar monto global y/o límites por categoría
