@@ -79,6 +79,7 @@ export const Budgets = () => {
   }
   
   const handleEdit = () => {
+  console.log('budget_categories:', budget.budget_categories) 
   // Pre-llenar con los límites actuales
   const current = {}
   budget.budget_categories?.forEach(bc => {
