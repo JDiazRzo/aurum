@@ -10,7 +10,13 @@ const app = express()
 const PORT = process.env.PORT || 3000
 
 // ── Middlewares globales ──────────────────────────────────────
-app.use(cors({ origin: process.env.CLIENT_URL }))
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    process.env.CLIENT_URL,
+  ].filter(Boolean),
+  credentials: true
+}))
 app.use(express.json())
 
 // ── Health check ──────────────────────────────────────────────
