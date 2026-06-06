@@ -15,7 +15,6 @@ const ProgressBar = ({ value, max }) => {
   )
 }
 
-
 export const Budgets = () => {
   const [budget,     setBudget]     = useState(null)
   const [loading,    setLoading]    = useState(true)
@@ -28,14 +27,6 @@ export const Budgets = () => {
   const [newBudget, setNewBudget] = useState({ total_amount: '', month, year })
 
   useEffect(() => {
-    categoryService.getAll()
-      .then(({ data }) => {
-        console.log('Categorías:', data)
-        setCategories(data.data || [])
-      })
-  }, [])
-
-  useEffect(() => {
     budgetService.getByMonth(year, month)
       .then(({ data }) => setBudget(data.data))
       .catch(() => setBudget(null))
@@ -43,7 +34,12 @@ export const Budgets = () => {
   }, [month, year])
 
   useEffect(() => {
-    categoryService.getAll().then(({ data }) => setCategories(data.data || []))
+    categoryService.getAll()
+      .then(({ data }) => {
+        console.log('Categorías:', data)
+        setCategories(data.data || [])
+      })
+      .catch(err => console.log('Error categorías:', err))
   }, [])
 
   const handleCreate = async () => {
@@ -56,7 +52,6 @@ export const Budgets = () => {
           category_id,
           limit_amount: Number(limit_amount)
         }))
-
       const { data } = await budgetService.create({
         total_amount: Number(newBudget.total_amount),
         month:        newBudget.month,
@@ -71,15 +66,36 @@ export const Budgets = () => {
     }
   }
 
+  const handleDelete = async () => {
+    if (!window.confirm('¿Eliminar el presupuesto de este mes?')) return
+    try {
+      await budgetService.remove(budget.id)
+      setBudget(null)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   if (loading) return <Layout><div style={{ color: 'var(--text-dim)', padding: '2rem' }}>Cargando...</div></Layout>
 
   return (
     <Layout>
-      <div className="fade-up" style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 600 }}>Presupuesto</h1>
-        <div style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 4 }}>
-          {MONTHS[month - 1]} {year}
+      <div className="fade-up" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 600 }}>Presupuesto</h1>
+          <div style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 4 }}>
+            {MONTHS[month - 1]} {year}
+          </div>
         </div>
+        {budget && (
+          <button onClick={handleDelete} style={{
+            padding: '8px 16px', borderRadius: 'var(--radius-md)',
+            background: 'transparent', border: '1px solid var(--danger)',
+            color: 'var(--danger)', cursor: 'pointer', fontSize: 13
+          }}>
+            Eliminar
+          </button>
+        )}
       </div>
 
       {!budget ? (
@@ -141,7 +157,6 @@ export const Budgets = () => {
         </>
       )}
 
-      {/* Modal crear presupuesto */}
       {showForm && (
         <div style={{
           position: 'fixed', inset: 0, background: 'rgba(0,0,0,.7)',
@@ -182,13 +197,14 @@ export const Budgets = () => {
                   </select>
                 </div>
               </div>
-
-              {/* Límites por categoría */}
               <div>
                 <label style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8, display: 'block' }}>
                   Límites por categoría (opcional)
                 </label>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {categories.length === 0 && (
+                    <div style={{ fontSize: 12, color: 'var(--text-dim)' }}>Cargando categorías...</div>
+                  )}
                   {categories.map(cat => (
                     <div key={cat.id} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ fontSize: 13, color: 'var(--text-muted)', width: 110, flexShrink: 0 }}>
@@ -202,7 +218,6 @@ export const Budgets = () => {
                   ))}
                 </div>
               </div>
-
               {formError && <div style={{ fontSize: 13, color: 'var(--danger)' }}>{formError}</div>}
               <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
                 <button onClick={() => setShowForm(false)} style={{
