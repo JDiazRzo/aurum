@@ -40,7 +40,7 @@ export const Dashboard = () => {
     <Layout>
       {/* Header */}
       <div className="fade-up mb-8">
-        <div className="text-sm text-dim mb-1">Bienvenido de nuevo</div>
+        <div className="text-sm text-muted mb-1">Bienvenido de nuevo</div>
         <h1 className="font-display text-4xl font-semibold text-white">
           {profile?.full_name || 'Usuario'}
         </h1>
