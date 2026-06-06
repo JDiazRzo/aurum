@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }) => {
   }
 
   const register = async (credentials) => {
-    console.log('Registrando:', credentials)
     const { data } = await authService.register(credentials)
     const token = data.data.session?.access_token
     if (token) {

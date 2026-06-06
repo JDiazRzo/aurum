@@ -64,7 +64,6 @@ export const profileService = {
 
 
 api.interceptors.request.use((config) => {
-  console.log('Request:', config.method.toUpperCase(), config.baseURL + config.url)
   const token = localStorage.getItem('aurum_token')
   if (token) config.headers.Authorization = `Bearer ${token}`
   return config

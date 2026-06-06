@@ -171,15 +171,37 @@ export const getAnomalies = async (authUserId) => {
     .eq('user_id', profileId)
     .eq('type', 'expense')
     .order('transaction_date', { ascending: false })
+    .limit(200)
 
   if (error) throw new AppError(error.message, 400)
   if (!data.length) return []
 
-  const amounts = data.map(t => Number(t.amount))
-  const avg = amounts.reduce((s, a) => s + a, 0) / amounts.length
-  const threshold = avg * 2
+  const transactions = data.map(t => ({
+    id:               t.id,
+    amount:           Number(t.amount),
+    type:             t.type,
+    description:      t.description,
+    category:         t.categories?.name || 'Sin categoría',
+    transaction_date: t.transaction_date
+  }))
 
-  return data
-    .filter(t => Number(t.amount) > threshold)
-    .map(t => ({ ...t, reason: `Monto ${(Number(t.amount) / avg).toFixed(1)}x mayor al promedio` }))
+  try {
+    const response = await fetch('http://localhost:8000/analyze', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ transactions })
+    })
+
+    const result = await response.json()
+    return result.anomalies || []
+
+  } catch {
+    // Fallback si Python no está corriendo
+    const amounts   = data.map(t => Number(t.amount))
+    const avg       = amounts.reduce((s, a) => s + a, 0) / amounts.length
+    const threshold = avg * 2
+    return data
+      .filter(t => Number(t.amount) > threshold)
+      .map(t => ({ ...t, reason: `Monto ${(Number(t.amount) / avg).toFixed(1)}x mayor al promedio` }))
+  }
 }
