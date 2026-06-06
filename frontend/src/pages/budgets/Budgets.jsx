@@ -19,6 +19,8 @@ export const Budgets = () => {
   const [budget,     setBudget]     = useState(null)
   const [loading,    setLoading]    = useState(true)
   const [showForm,   setShowForm]   = useState(false)
+  const [showEdit,  setShowEdit]  = useState(false)
+  const [editLimits, setEditLimits] = useState({})
   const [formError,  setFormError]  = useState('')
   const [categories, setCategories] = useState([])
   const [catLimits,  setCatLimits]  = useState({})
@@ -75,6 +77,35 @@ export const Budgets = () => {
       console.error(err)
     }
   }
+  
+  const handleEdit = () => {
+  // Pre-llenar con los límites actuales
+  const current = {}
+  budget.budget_categories?.forEach(bc => {
+    current[bc.category_id] = bc.limit_amount
+  })
+  setEditLimits(current)
+  setShowEdit(true)
+}
+
+const handleUpdate = async () => {
+    try {
+      const cats = Object.entries(editLimits)
+        .filter(([_, v]) => v && Number(v) > 0)
+        .map(([category_id, limit_amount]) => ({
+          category_id,
+          limit_amount: Number(limit_amount)
+        }))
+
+      const { data } = await budgetService.update(budget.id, {
+        categories: cats
+      })
+      setBudget(data.data)
+      setShowEdit(false)
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   if (loading) return <Layout><div style={{ color: 'var(--text-dim)', padding: '2rem' }}>Cargando...</div></Layout>
 
@@ -88,13 +119,22 @@ export const Budgets = () => {
           </div>
         </div>
         {budget && (
-          <button onClick={handleDelete} style={{
-            padding: '8px 16px', borderRadius: 'var(--radius-md)',
-            background: 'transparent', border: '1px solid var(--danger)',
-            color: 'var(--danger)', cursor: 'pointer', fontSize: 13
-          }}>
-            Eliminar
-          </button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={handleEdit} style={{
+              padding: '8px 16px', borderRadius: 'var(--radius-md)',
+              background: 'transparent', border: '1px solid var(--gold)',
+              color: 'var(--gold)', cursor: 'pointer', fontSize: 13
+            }}>
+              Editar
+            </button>
+            <button onClick={handleDelete} style={{
+              padding: '8px 16px', borderRadius: 'var(--radius-md)',
+              background: 'transparent', border: '1px solid var(--danger)',
+              color: 'var(--danger)', cursor: 'pointer', fontSize: 13
+            }}>
+              Eliminar
+            </button>
+          </div>
         )}
       </div>
 
@@ -230,6 +270,55 @@ export const Budgets = () => {
                   background: 'var(--gold)', border: 'none',
                   color: '#080808', fontWeight: 600, cursor: 'pointer'
                 }}>Crear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showEdit && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,.7)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100,
+        }} onClick={e => e.target === e.currentTarget && setShowEdit(false)}>
+          <div style={{
+            background: 'var(--surface2)', border: '1px solid var(--border)',
+            borderRadius: 'var(--radius-lg)', padding: '1.5rem', width: '100%', maxWidth: 420,
+            maxHeight: '90vh', overflowY: 'auto'
+          }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 22, marginBottom: '1.5rem' }}>
+              Editar presupuesto
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8, display: 'block' }}>
+                  Límites por categoría
+                </label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {categories.map(cat => (
+                    <div key={cat.id} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontSize: 13, color: 'var(--text-muted)', width: 110, flexShrink: 0 }}>
+                        {cat.name}
+                      </span>
+                      <input type="number" placeholder="$0"
+                        value={editLimits[cat.id] || ''}
+                        onChange={e => setEditLimits(p => ({ ...p, [cat.id]: e.target.value }))}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                <button onClick={() => setShowEdit(false)} style={{
+                  flex: 1, padding: '10px', borderRadius: 'var(--radius-md)',
+                  background: 'transparent', border: '1px solid var(--border)',
+                  color: 'var(--text-muted)', cursor: 'pointer'
+                }}>Cancelar</button>
+                <button onClick={handleUpdate} style={{
+                  flex: 2, padding: '10px', borderRadius: 'var(--radius-md)',
+                  background: 'var(--gold)', border: 'none',
+                  color: '#080808', fontWeight: 600, cursor: 'pointer'
+                }}>Guardar cambios</button>
               </div>
             </div>
           </div>
