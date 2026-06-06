@@ -95,7 +95,9 @@ const handleUpdate = async () => {
         .map(([category_id, limit_amount]) => ({
           category_id,
           limit_amount: Number(limit_amount)
-        }))
+      }))
+
+      console.log('Enviando update:', { categories: cats })
 
       const { data } = await budgetService.update(budget.id, {
         categories: cats
