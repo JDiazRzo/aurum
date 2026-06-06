@@ -1,4 +1,5 @@
 import { Sidebar } from './Sidebar.jsx'
+import { BottomBar } from './BottomBar.jsx'
 import Aurora from '../background/Aurora.jsx'
 
 export const Layout = ({ children }) => (
@@ -15,10 +16,20 @@ export const Layout = ({ children }) => (
 
     {/* Contenido encima del fondo */}
     <div className="relative z-10 flex w-full">
-      <Sidebar />
-      <main className="ml-[220px] flex-1 p-10 max-w-[960px] min-h-screen">
+      {/* Sidebar solo en desktop */}
+      <div className="hidden md:block">
+        <Sidebar />
+      </div>
+
+      {/* Contenido principal */}
+      <main className="flex-1 md:ml-[220px] p-4 md:p-10 max-w-[960px] min-h-screen pb-24 md:pb-10">
         {children}
       </main>
+    </div>
+
+    {/* Bottom bar solo en móvil */}
+    <div className="md:hidden">
+      <BottomBar />
     </div>
   </div>
 )

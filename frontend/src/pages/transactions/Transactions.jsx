@@ -19,7 +19,7 @@ export const Transactions = () => {
 
   return (
     <Layout>
-      <div className="flex justify-between items-start mb-8">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-8">
         <div className="fade-up">
           <h1 className="font-display text-4xl font-semibold">Movimientos</h1>
           <div className="text-sm text-muted mt-1">Registro de tus gastos e ingresos</div>
@@ -30,7 +30,7 @@ export const Transactions = () => {
       </div>
 
       {/* Filtros */}
-      <Card className="fade-up-2 mb-6 flex gap-4 flex-wrap">
+      <Card className="fade-up-2 mb-6 flex flex-col md:flex-row gap-4">
         <select
           value={filter.month}
           onChange={e => setFilter(p => ({ ...p, month: Number(e.target.value) }))}

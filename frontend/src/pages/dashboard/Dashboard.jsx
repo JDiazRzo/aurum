@@ -30,17 +30,17 @@ export const Dashboard = () => {
   }, [])
 
   const chartData = summary?.by_category
-  ? Object.entries(summary.by_category).map(([name, amount]) => ({
-      mes: name,
-      gastos: amount
-    }))
-  : [{ mes: MONTHS[month - 1], gastos: summary?.total_expense || 0 }]
+    ? Object.entries(summary.by_category).map(([name, amount]) => ({
+        mes: name,
+        gastos: amount
+      }))
+    : [{ mes: MONTHS[month - 1], gastos: summary?.total_expense || 0 }]
 
   return (
     <Layout>
       {/* Header */}
       <div className="fade-up mb-8">
-        <div className="text-sm text-muted mb-1">Bienvenido de nuevo</div>
+        <div className="text-sm text-gold/60 mb-1">Bienvenido de nuevo</div>
         <h1 className="font-display text-4xl font-semibold text-white">
           {profile?.full_name || 'Usuario'}
         </h1>
@@ -51,7 +51,7 @@ export const Dashboard = () => {
       <Card className="fade-up-1 mb-6 relative overflow-hidden">
         <div className="absolute -top-10 -right-10 w-36 h-36 rounded-full bg-gold opacity-[0.03]" />
         <div className="text-xs text-dim tracking-[1px] mb-2">BALANCE DEL MES</div>
-        <div className="font-display text-5xl font-bold text-gold tracking-tight">
+        <div className="font-display text-4xl md:text-5xl font-bold text-gold tracking-tight">
           {formatCOP(summary?.balance || 0)}
         </div>
         <div className="text-sm text-muted mt-1.5">
@@ -60,7 +60,7 @@ export const Dashboard = () => {
       </Card>
 
       {/* Stats */}
-      <div className="flex gap-4 mb-6">
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
         <StatCard label="INGRESOS" amount={summary?.total_income}  color="text-success" delay={2} />
         <StatCard label="GASTOS"   amount={summary?.total_expense} color="text-danger"  delay={3} />
       </div>
@@ -88,7 +88,7 @@ export const Dashboard = () => {
         </ResponsiveContainer>
       </Card>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Últimos movimientos */}
         <Card>
           <div className="text-xs text-dim tracking-[1px] mb-4">ÚLTIMOS MOVIMIENTOS</div>

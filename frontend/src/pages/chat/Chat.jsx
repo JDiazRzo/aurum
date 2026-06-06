@@ -102,7 +102,7 @@ export const Chat = () => {
         <div className="text-sm text-muted mt-1">Pregúntame sobre tus finanzas</div>
       </div>
 
-      <div className="flex flex-col" style={{ height: 'calc(100vh - 200px)' }}>
+      <div className="flex flex-col" style={{ height: 'calc(100vh - 280px)' }}>
         <Card className="flex-1 overflow-y-auto mb-4 p-6">
           {messages.map((msg, i) => <Message key={i} msg={msg} />)}
           {loading && <TypingIndicator />}

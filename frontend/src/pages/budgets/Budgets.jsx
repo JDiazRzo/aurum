@@ -158,7 +158,7 @@ export const Budgets = () => {
 
   return (
     <Layout>
-      <div className="fade-up flex justify-between items-start mb-8">
+      <div className="fade-up flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-8">
         <div>
           <h1 className="font-display text-4xl font-semibold">Presupuesto</h1>
           <div className="text-sm text-muted mt-1">{MONTHS[month - 1]} {year}</div>
@@ -191,7 +191,7 @@ export const Budgets = () => {
           <Card className="fade-up-1 mb-6 relative overflow-hidden">
             <div className="absolute -top-10 -right-10 w-36 h-36 rounded-full bg-gold opacity-[0.03]" />
             <div className="text-xs text-dim tracking-[1px] mb-2">DISPONIBLE DEL MES</div>
-            <div className="font-display text-5xl font-bold text-gold">
+            <div className="font-display text-4xl md:text-5xl font-bold text-gold">
               {formatCOP(budget.remaining || 0)}
             </div>
             <ProgressBar value={budget.total_spent || 0} max={budget.total_amount} />
