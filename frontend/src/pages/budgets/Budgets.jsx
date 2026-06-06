@@ -16,15 +16,6 @@ const ProgressBar = ({ value, max }) => {
 }
 
 
-useEffect(() => {
-  categoryService.getAll()
-    .then(({ data }) => {
-      console.log('Categorías:', data)
-      setCategories(data.data || [])
-    })
-}, [])
-
-
 export const Budgets = () => {
   const [budget,     setBudget]     = useState(null)
   const [loading,    setLoading]    = useState(true)
@@ -35,6 +26,14 @@ export const Budgets = () => {
   const [month] = useState(currentMonth())
   const [year]  = useState(currentYear())
   const [newBudget, setNewBudget] = useState({ total_amount: '', month, year })
+
+  useEffect(() => {
+    categoryService.getAll()
+      .then(({ data }) => {
+        console.log('Categorías:', data)
+        setCategories(data.data || [])
+      })
+  }, [])
 
   useEffect(() => {
     budgetService.getByMonth(year, month)
