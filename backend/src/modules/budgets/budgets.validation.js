@@ -11,9 +11,9 @@ export const createBudgetSchema = z.object({
 })
 
 export const updateBudgetSchema = z.object({
-  total_amount: z.number().positive().optional(),
+  total_amount: z.coerce.number().positive().optional(),
   categories:   z.array(z.object({
     category_id:  z.string().uuid(),
-    limit_amount: z.number().positive()
+    limit_amount: z.coerce.number().positive()
   })).optional()
 })
