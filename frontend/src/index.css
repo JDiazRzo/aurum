@@ -1,0 +1,76 @@
+:root {
+  --gold:        #C9A84C;
+  --gold-light:  #e8c97a;
+  --gold-dim:    #8a6e2e;
+  --gold-bg:     #16120a;
+  --black:       #080808;
+  --surface:     #0e0d08;
+  --surface2:    #141208;
+  --surface3:    #1c1a0f;
+  --border:      #2a2410;
+  --border2:     #3a3318;
+  --text:        #f0ead6;
+  --text-muted:  #7a6e52;
+  --text-dim:    #4a4232;
+  --success:     #6db887;
+  --danger:      #c97070;
+  --warn:        #c9a44c;
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body:    'DM Sans', sans-serif;
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--black);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* Animaciones globales */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+.fade-up { animation: fadeUp .4s ease both; }
+.fade-up-1 { animation: fadeUp .4s .05s ease both; }
+.fade-up-2 { animation: fadeUp .4s .1s  ease both; }
+.fade-up-3 { animation: fadeUp .4s .15s ease both; }
+.fade-up-4 { animation: fadeUp .4s .2s  ease both; }
+
+/* Inputs globales */
+input, select, textarea {
+  font-family: var(--font-body);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  padding: 10px 14px;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+  transition: border-color .2s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--gold);
+}
+input::placeholder { color: var(--text-dim); }
+
+button { cursor: pointer; font-family: var(--font-body); }
