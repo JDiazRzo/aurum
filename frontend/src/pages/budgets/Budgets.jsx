@@ -106,6 +106,7 @@ const handleUpdate = async () => {
       setShowEdit(false)
     } catch (err) {
       console.error(err)
+      console.error('Error detalle:', JSON.stringify(err.response?.data)) // ← agrega esta línea
     }
   }
 
