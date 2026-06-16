@@ -30,7 +30,7 @@ export const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-black">
       <div className="fade-up w-full max-w-sm px-6">
-        {/* Logo */}
+      
         <div className="text-center mb-10">
           <div className="font-display text-5xl text-gold tracking-[6px] font-bold">
             AURUM
@@ -40,7 +40,7 @@ export const Login = () => {
           </div>
         </div>
 
-        {/* Línea decorativa */}
+      
         <div className="h-px mb-8" style={{ background: 'linear-gradient(90deg, transparent, #C9A84C, transparent)' }} />
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

@@ -16,7 +16,7 @@ export const Sidebar = () => {
 
   return (
     <aside className="w-[220px] min-h-screen bg-surface border-r border-border fixed top-0 left-0 flex flex-col px-5 py-8">
-      {/* Logo */}
+   
       <div className="mb-10">
         <div className="font-display text-[26px] text-gold tracking-[4px] font-bold">
           AURUM
@@ -26,7 +26,7 @@ export const Sidebar = () => {
         </div>
       </div>
 
-      {/* Navegación */}
+   
       <nav className="flex flex-col gap-1 flex-1">
         {NAV.map(({ to, icon, label }) => (
           <NavLink key={to} to={to} className={({ isActive }) => `
@@ -43,7 +43,7 @@ export const Sidebar = () => {
         ))}
       </nav>
 
-      {/* Perfil */}
+
       <div className="border-t border-border pt-4">
         <div className="text-sm text-muted mb-1">
           {profile?.full_name || 'Usuario'}

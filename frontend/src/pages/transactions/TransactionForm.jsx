@@ -49,7 +49,7 @@ export const TransactionForm = ({ onSubmit, onClose }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {/* Tipo */}
+        
           <div className="grid grid-cols-2 gap-2">
             {['expense', 'income'].map(type => (
               <button
@@ -74,7 +74,7 @@ export const TransactionForm = ({ onSubmit, onClose }) => {
           <Input label="Descripción" type="text" placeholder="¿En qué?"
             value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} />
 
-          {/* Categorías */}
+
           <div>
             <div className="text-xs text-muted tracking-wide mb-2">Categoría</div>
             <div className="grid grid-cols-4 gap-1.5">

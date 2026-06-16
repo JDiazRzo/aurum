@@ -7,5 +7,5 @@ const supabaseKey = process.env.SUPABASE_SERVICE_KEY
 if (!supabaseUrl || !supabaseKey) {
   throw new Error('Faltan variables de entorno: SUPABASE_URL y SUPABASE_SERVICE_KEY')
 }
-// Service role: acceso completo a la BD (solo en backend, nunca en frontend)
+
 export const supabase = createClient(supabaseUrl, supabaseKey)

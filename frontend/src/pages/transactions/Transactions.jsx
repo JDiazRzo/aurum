@@ -29,7 +29,7 @@ export const Transactions = () => {
         </Button>
       </div>
 
-      {/* Filtros */}
+  
       <Card className="fade-up-2 mb-6 flex flex-col md:flex-row gap-4">
         <select
           value={filter.month}
@@ -56,7 +56,7 @@ export const Transactions = () => {
         </select>
       </Card>
 
-      {/* Lista */}
+
       <div className="fade-up-3 flex flex-col gap-2">
         {loading && (
           <div className="text-center text-dim py-8">Cargando...</div>

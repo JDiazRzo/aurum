@@ -4,7 +4,7 @@ import Aurora from '../background/Aurora.jsx'
 
 export const Layout = ({ children }) => (
   <div className="flex min-h-screen bg-black relative">
-    {/* Fondo Aurora */}
+  
     <div className="fixed inset-0 z-0">
       <Aurora
         colorStops={["#2a1f08", "#C9A84C", "#1a1508"]}
@@ -14,20 +14,20 @@ export const Layout = ({ children }) => (
       />
     </div>
 
-    {/* Contenido encima del fondo */}
+ 
     <div className="relative z-10 flex w-full">
-      {/* Sidebar solo en desktop */}
+   
       <div className="hidden md:block">
         <Sidebar />
       </div>
 
-      {/* Contenido principal */}
+
       <main className="flex-1 md:ml-[220px] p-4 md:p-10 max-w-[960px] min-h-screen pb-24 md:pb-10">
         {children}
       </main>
     </div>
 
-    {/* Bottom bar solo en móvil */}
+
     <div className="md:hidden">
       <BottomBar />
     </div>

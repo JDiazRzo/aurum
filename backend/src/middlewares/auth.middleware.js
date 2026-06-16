@@ -1,7 +1,5 @@
 import { supabase } from '../../config/supabase.js'
 
-// Verifica que el token JWT de Supabase sea válido.
-// Adjunta el usuario a req.user para que los controllers lo usen.
 export const requireAuth = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization

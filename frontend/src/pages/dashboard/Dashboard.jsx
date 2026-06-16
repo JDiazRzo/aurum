@@ -38,7 +38,7 @@ export const Dashboard = () => {
 
   return (
     <Layout>
-      {/* Header */}
+     
       <div className="fade-up mb-8">
         <div className="text-sm text-gold/60 mb-1">Bienvenido de nuevo</div>
         <h1 className="font-display text-4xl font-semibold text-white">
@@ -47,7 +47,7 @@ export const Dashboard = () => {
         <div className="text-sm text-muted mt-1">{MONTHS[month - 1]} {year}</div>
       </div>
 
-      {/* Balance principal */}
+   
       <Card className="fade-up-1 mb-6 relative overflow-hidden">
         <div className="absolute -top-10 -right-10 w-36 h-36 rounded-full bg-gold opacity-[0.03]" />
         <div className="text-xs text-dim tracking-[1px] mb-2">BALANCE DEL MES</div>
@@ -59,13 +59,13 @@ export const Dashboard = () => {
         </div>
       </Card>
 
-      {/* Stats */}
+   
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <StatCard label="INGRESOS" amount={summary?.total_income}  color="text-success" delay={2} />
         <StatCard label="GASTOS"   amount={summary?.total_expense} color="text-danger"  delay={3} />
       </div>
 
-      {/* Gráfica */}
+     
       <Card className="fade-up-4 mb-6">
         <div className="text-xs text-dim tracking-[1px] mb-4">TENDENCIA DE GASTOS</div>
         <ResponsiveContainer width="100%" height={180}>
@@ -89,7 +89,7 @@ export const Dashboard = () => {
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Últimos movimientos */}
+     
         <Card>
           <div className="text-xs text-dim tracking-[1px] mb-4">ÚLTIMOS MOVIMIENTOS</div>
           <div className="flex flex-col gap-2.5">
@@ -112,7 +112,6 @@ export const Dashboard = () => {
           </div>
         </Card>
 
-        {/* Anomalías */}
         <Card>
           <div className="text-xs text-dim tracking-[1px] mb-4">GASTOS INUSUALES</div>
           <div className="flex flex-col gap-2.5">
