@@ -35,55 +35,6 @@
 
 ---
 
----
-
-### Getting Started
-
-```bash
-# Backend
-cd backend
-cp .env.example .env
-npm install
-npm run dev
-
-# Frontend
-cd frontend
-cp .env.example .env
-npm install
-npm run dev
-
-# Python service
-cd python-service
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-python main.py
-```
-
----
-
-### Environment Variables
-
-**Backend `.env`**
-```env
-SUPABASE_URL=
-SUPABASE_SERVICE_KEY=
-GROQ_API_KEY=
-PYTHON_SERVICE_URL=
-CLIENT_URL=
-PORT=3000
-```
-
-**Frontend `.env`**
-```env
-VITE_API_URL=
-```
-
-**Python `.env`**
-```env
-PORT=8000
-```
-
 </div>
 
 ![footer](https://capsule-render.vercel.app/api?type=waving&height=200&color=gradient&customColorList=20,10,5&text=Built%20with%20React%2C%20Node.js%20%26%20Python&section=footer&fontAlignY=65&fontSize=24)
