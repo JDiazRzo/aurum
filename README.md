@@ -35,6 +35,12 @@
 
 ---
 
+### Documentation
+
+[![Docs](https://img.shields.io/badge/DeepWiki-Docs-526CFE?style=for-the-badge&logo=gitbook&logoColor=white)](https://deepwiki.com/JDiazRzo/aurum)
+
+---
+
 </div>
 
-![footer](https://capsule-render.vercel.app/api?type=waving&height=200&color=gradient&customColorList=20,10,5&text=Built%20with%20React%2C%20Node.js%20%26%20Python&section=footer&fontAlignY=65&fontSize=24)
+![footer](https://capsule-render.vercel.app/api?type=waving&height=200&color=gradient&customColorList=20,10,5&text=Aurum&section=footer&fontAlignY=65&fontSize=30)
