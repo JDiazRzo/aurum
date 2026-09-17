@@ -4,14 +4,14 @@ import { AppError } from '../../utils/AppError.js'
 
 
 export const registerUser = async ({ email, password, full_name }) => {
-  const { data, error } = await supabase.auth.signUp({
+  const { data: authData, error } = await supabase.auth.signUp({
     email,
     password,
     options: { data: { full_name } }
   })
 
   if (error) throw new AppError(error.message, 400)
-  return { user: data.user, session: data.session }
+  return { user: authData.user, session: authData.session }
 }
 
 export const loginUser = async ({ email, password }) => {
