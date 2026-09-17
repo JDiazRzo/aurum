@@ -22,7 +22,7 @@ export const Layout = ({ children }) => (
       </div>
 
 
-      <main className="flex-1 md:ml-[220px] p-4 md:p-10 max-w-[960px] min-h-screen pb-24 md:pb-10">
+      <main className="flex-1 md:ml-[220px] p-4 md:p-10 min-h-screen pb-24 md:pb-10">
         {children}
       </main>
     </div>
