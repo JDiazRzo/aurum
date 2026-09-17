@@ -16,6 +16,17 @@ export const createTransactionSchema = z.object({
 
 export const updateTransactionSchema = createTransactionSchema.partial()
 
+export const importTransactionsSchema = z.object({
+  transactions: z.array(z.object({
+    amount:           z.coerce.number().positive('El monto debe ser mayor a 0'),
+    type:             z.enum(['income', 'expense']),
+    description:      z.string().max(255).optional(),
+    category_id:      z.string().uuid('category_id inválido').optional(),
+    category_name:    z.string().max(100).optional(),
+    transaction_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato: YYYY-MM-DD')
+  })).min(1, 'El archivo no contiene movimientos válidos').max(1000, 'Máximo 1000 movimientos por importación')
+})
+
 export const categorySchema = z.object({
   category_id: z.string().uuid('category_id inválido')
 })

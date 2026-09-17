@@ -81,6 +81,62 @@ export const createTransaction = async (authUserId, body) => {
   return data
 }
 
+const normalizeName = (value = '') => value
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .trim()
+  .toLowerCase()
+
+// ── Importar transacciones desde CSV/Excel ───────────────────
+export const importTransactions = async (authUserId, transactions) => {
+  const profileId = await getProfileId(authUserId)
+
+  const { data: categories, error: categoriesError } = await supabase
+    .from('categories')
+    .select('id, name')
+    .or(`user_id.eq.${profileId},is_default.eq.true`)
+
+  if (categoriesError) throw new AppError(categoriesError.message, 400)
+
+  const categoryIds = new Set((categories || []).map(category => category.id))
+  const categoriesByName = new Map(
+    (categories || []).map(category => [normalizeName(category.name), category.id])
+  )
+
+  const rows = transactions.map(transaction => {
+    let categoryId = transaction.category_id
+
+    if (categoryId && !categoryIds.has(categoryId)) {
+      throw new AppError(`La categoría ${categoryId} no está disponible para este usuario`, 400)
+    }
+
+    if (!categoryId && transaction.category_name) {
+      categoryId = categoriesByName.get(normalizeName(transaction.category_name))
+    }
+
+    return {
+      user_id:          profileId,
+      amount:           transaction.amount,
+      type:             transaction.type,
+      description:      transaction.description || null,
+      category_id:      categoryId || null,
+      transaction_date: transaction.transaction_date
+    }
+  })
+
+  const { data, error } = await supabase
+    .from('transactions')
+    .insert(rows)
+    .select('id')
+
+  if (error) throw new AppError(error.message, 400)
+
+  return {
+    imported: data?.length || rows.length,
+    uncategorized: rows.filter(row => !row.category_id).length
+  }
+}
+
 // ── Actualizar transacción ────────────────────────────────────
 export const updateTransaction = async (authUserId, id, body) => {
   const profileId = await getProfileId(authUserId)

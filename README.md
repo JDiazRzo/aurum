@@ -25,6 +25,7 @@
 ### Features
 
 - Dashboard with monthly balance, income vs expenses and spending trends
+- Bulk transaction import from CSV and XLSX files with row validation
 - Transaction management with category filtering
 - Monthly budgets with per-category limits and real-time tracking
 - ML anomaly detection using Isolation Forest (Python/FastAPI microservice)
@@ -32,6 +33,18 @@
 - Authentication with Supabase Auth and Row Level Security
 - Fully responsive with mobile bottom navigation
 - Aurora animated background
+
+### Import format
+
+From the dashboard, users can import up to 1,000 transactions at a time. The importer recognizes headers in Spanish or English:
+
+| Required | Accepted headers |
+| --- | --- |
+| Date | `fecha`, `date`, `transaction_date` |
+| Amount | `monto`, `valor`, `amount`, `importe` |
+| Type | `tipo` / `type` with `ingreso` or `gasto` |
+
+Optional columns are `descripcion` / `description` and `categoria` / `category`. Bank exports with separate `debito` and `credito` columns are also supported and do not require a type column.
 
 ---
 

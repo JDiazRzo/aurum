@@ -24,6 +24,13 @@ export const create = async (req, res, next) => {
   } catch (err) { next(err) }
 }
 
+export const importMany = async (req, res, next) => {
+  try {
+    const data = await service.importTransactions(req.user.id, req.body.transactions)
+    successResponse(res, data, `${data.imported} movimientos importados`, 201)
+  } catch (err) { next(err) }
+}
+
 export const update = async (req, res, next) => {
   try {
     const data = await service.updateTransaction(req.user.id, req.params.id, req.body)
