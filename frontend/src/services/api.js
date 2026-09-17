@@ -33,6 +33,7 @@ export const transactionService = {
   getAll:     (params)       => api.get('/transactions', { params }),
   getOne:     (id)           => api.get(`/transactions/${id}`),
   create:     (data)         => api.post('/transactions', data),
+  importMany: (transactions) => api.post('/transactions/import', { transactions }),
   update:     (id, data)     => api.put(`/transactions/${id}`, data),
   remove:     (id)           => api.delete(`/transactions/${id}`),
   summary:    (params)       => api.get('/transactions/summary', { params }),

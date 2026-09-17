@@ -38,11 +38,14 @@ export const useSummary = (month, year) => {
   const [summary, setSummary] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    transactionService.summary({ month, year })
+  const fetch = useCallback(() => {
+    setLoading(true)
+    return transactionService.summary({ month, year })
       .then(({ data }) => setSummary(data.data))
       .finally(() => setLoading(false))
   }, [month, year])
 
-  return { summary, loading }
+  useEffect(() => { fetch() }, [fetch])
+
+  return { summary, loading, refetch: fetch }
 }

@@ -8,12 +8,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "axios": "^1.7.7",
+    "axios": "^1.20.0",
     "date-fns": "^4.1.0",
     "ogl": "^1.0.11",
+    "papaparse": "^5.5.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2",
+    "read-excel-file": "^6.0.1",
     "recharts": "^2.12.7"
   },
   "devDependencies": {

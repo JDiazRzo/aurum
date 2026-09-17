@@ -3,6 +3,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import { Layout } from '../../components/layout/Layout.jsx'
 import { Card } from '../../components/ui/Card.jsx'
 import { Badge } from '../../components/ui/Badge.jsx'
+import { ImportTransactions } from '../../components/dashboard/ImportTransactions.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useSummary, useTransactions } from '../../hooks/useTransactions.js'
 import { transactionService } from '../../services/api.js'
@@ -21,13 +22,20 @@ export const Dashboard = () => {
   const { profile }   = useAuth()
   const month         = currentMonth()
   const year          = currentYear()
-  const { summary }   = useSummary(month, year)
-  const { transactions } = useTransactions({ month, year, limit: 5 })
+  const { summary, refetch: refetchSummary } = useSummary(month, year)
+  const { transactions, refetch: refetchTransactions } = useTransactions({ month, year, limit: 5 })
   const [anomalies, setAnomalies] = useState([])
 
-  useEffect(() => {
-    transactionService.anomalies().then(({ data }) => setAnomalies(data.data || []))
-  }, [])
+  const fetchAnomalies = () => transactionService.anomalies()
+    .then(({ data }) => setAnomalies(data.data || []))
+
+  useEffect(() => { fetchAnomalies() }, [])
+
+  const refreshDashboard = () => Promise.all([
+    refetchSummary(),
+    refetchTransactions(),
+    fetchAnomalies()
+  ])
 
   const chartData = summary?.by_category
     ? Object.entries(summary.by_category).map(([name, amount]) => ({
@@ -46,6 +54,8 @@ export const Dashboard = () => {
         </h1>
         <div className="text-sm text-muted mt-1">{MONTHS[month - 1]} {year}</div>
       </div>
+
+      <ImportTransactions onImported={refreshDashboard} />
 
    
       <Card className="fade-up-1 mb-6 relative overflow-hidden">
