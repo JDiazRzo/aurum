@@ -12,15 +12,24 @@ export const ResetPassword = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Supabase envía el token en el hash de la URL
-    // Hay que escuchar el evento PASSWORD_RECOVERY
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        setReady(true)
-      }
-    })
-    return () => subscription.unsubscribe()
-  }, [])
+        // Leer el token del hash de la URL manualmente
+        const hashParams = new URLSearchParams(window.location.hash.slice(1))
+        const accessToken  = hashParams.get('access_token')
+        const refreshToken = hashParams.get('refresh_token')
+        const type         = hashParams.get('type')
+
+        if (type === 'recovery' && accessToken) {
+            supabase.auth.setSession({
+            access_token:  accessToken,
+            refresh_token: refreshToken,
+            }).then(({ error }) => {
+            if (!error) setReady(true)
+            else setError('Enlace inválido o expirado')
+            })
+        } else {
+            setError('Enlace inválido. Solicita uno nuevo.')
+        }
+    }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
