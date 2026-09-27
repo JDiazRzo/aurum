@@ -78,3 +78,10 @@ input:focus, select:focus, textarea:focus {
 input::placeholder { color: var(--text-dim); }
 
 button { cursor: pointer; font-family: var(--font-body); }
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

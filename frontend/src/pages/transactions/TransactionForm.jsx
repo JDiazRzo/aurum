@@ -83,6 +83,7 @@ export const TransactionForm = ({ onSubmit, onClose }) => {
 
         <div className="p-5 flex flex-col gap-4 max-h-[60vh] overflow-y-auto">
 
+
           <div>
             <label className="text-xs text-muted tracking-wide mb-1.5 block">¿En qué?</label>
             <input
@@ -95,19 +96,19 @@ export const TransactionForm = ({ onSubmit, onClose }) => {
 
           <div>
             <label className="text-xs text-muted tracking-wide mb-2 block">Categoría</label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
               {categories.map(cat => (
                 <button
                   key={cat.id} type="button"
                   onClick={() => setForm(p => ({ ...p, category_id: cat.id }))}
-                  className={`flex flex-col items-center gap-1 py-3 px-2 rounded-xl text-xs transition-all duration-200 cursor-pointer border ${
+                  className={`flex flex-col items-center gap-1 py-2.5 px-3 rounded-xl text-xs transition-all duration-200 cursor-pointer border flex-shrink-0 ${
                     form.category_id === cat.id
                       ? 'bg-gold-bg border-gold text-gold'
-                      : 'bg-surface2 border-border text-muted hover:border-gold/50 hover:text-gold/70'
+                      : 'bg-surface2 border-border text-muted hover:border-gold/50'
                   }`}
                 >
-                  <span className="text-xl">{CATS_ICONS[cat.name] || '○'}</span>
-                  <span className="leading-tight text-center">{cat.name}</span>
+                  <span className="text-lg">{CATS_ICONS[cat.name] || '○'}</span>
+                  <span className="whitespace-nowrap">{cat.name}</span>
                 </button>
               ))}
             </div>
