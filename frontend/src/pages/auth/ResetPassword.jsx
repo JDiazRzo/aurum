@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../services/supabase.js'
 
 export const ResetPassword = () => {
-  const [password,  setPassword]  = useState('')
-  const [confirm,   setConfirm]   = useState('')
-  const [loading,   setLoading]   = useState(false)
-  const [error,     setError]     = useState('')
-  const [success,   setSuccess]   = useState(false)
+  const [password, setPassword] = useState('')
+  const [confirm,  setConfirm]  = useState('')
+  const [loading,  setLoading]  = useState(false)
+  const [error,    setError]    = useState('')
+  const [success,  setSuccess]  = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
@@ -17,7 +17,8 @@ export const ResetPassword = () => {
     setLoading(true)
     setError('')
     try {
-      await authService.resetPassword(password)
+      const { error } = await supabase.auth.updateUser({ password })
+      if (error) throw error
       setSuccess(true)
       setTimeout(() => navigate('/login'), 3000)
     } catch {
