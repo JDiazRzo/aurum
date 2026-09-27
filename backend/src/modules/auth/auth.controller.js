@@ -1,5 +1,6 @@
 import { registerUser, loginUser, logoutUser } from './auth.service.js'
 import { successResponse } from '../../utils/response.js'
+import { registerUser, loginUser, logoutUser, forgotPasswordUser, resetPasswordUser } from './auth.service.js'
 
 export const register = async (req, res, next) => {
   try {
