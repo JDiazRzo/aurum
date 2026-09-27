@@ -42,9 +42,8 @@ export const TransactionForm = ({ onSubmit, onClose }) => {
       className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-end md:items-center justify-center z-50"
       onClick={e => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full md:max-w-md bg-surface border border-border rounded-t-2xl md:rounded-2xl overflow-hidden">
+      <div className="w-full md:max-w-md bg-surface border border-border rounded-t-2xl md:rounded-2xl overflow-hidden transition-none">
         
-        {/* Header con tipo integrado */}
         <div className={`p-5 pb-4 transition-colors duration-300 ${
           form.type === 'expense' ? 'bg-[#1a0808]' : 'bg-[#081a08]'
         }`}>
@@ -53,7 +52,6 @@ export const TransactionForm = ({ onSubmit, onClose }) => {
             <button onClick={onClose} className="text-muted text-2xl bg-transparent border-none cursor-pointer hover:text-white leading-none">×</button>
           </div>
 
-          {/* Toggle tipo */}
           <div className="flex bg-black/20 rounded-xl p-1 gap-1">
             {[
               { key: 'expense', label: '↓ Gasto',   active: 'text-danger  border-danger/50  bg-danger/10'  },
@@ -71,7 +69,6 @@ export const TransactionForm = ({ onSubmit, onClose }) => {
             ))}
           </div>
 
-          {/* Monto grande y prominente */}
           <div className="mt-4 relative">
             <span className="absolute left-0 top-1/2 -translate-y-1/2 text-2xl text-muted font-display">$</span>
             <input
@@ -84,10 +81,8 @@ export const TransactionForm = ({ onSubmit, onClose }) => {
           </div>
         </div>
 
-        {/* Cuerpo del form */}
         <div className="p-5 flex flex-col gap-4 max-h-[60vh] overflow-y-auto">
 
-          {/* Descripción */}
           <div>
             <label className="text-xs text-muted tracking-wide mb-1.5 block">¿En qué?</label>
             <input
@@ -98,7 +93,6 @@ export const TransactionForm = ({ onSubmit, onClose }) => {
             />
           </div>
 
-          {/* Categorías — grid más grande */}
           <div>
             <label className="text-xs text-muted tracking-wide mb-2 block">Categoría</label>
             <div className="grid grid-cols-3 gap-2">
@@ -119,7 +113,6 @@ export const TransactionForm = ({ onSubmit, onClose }) => {
             </div>
           </div>
 
-          {/* Fecha */}
           <div>
             <label className="text-xs text-muted tracking-wide mb-1.5 block">Fecha</label>
             <input
@@ -133,7 +126,6 @@ export const TransactionForm = ({ onSubmit, onClose }) => {
           {error && <div className="text-sm text-danger text-center">{error}</div>}
         </div>
 
-        {/* Footer con botones */}
         <div className="p-4 border-t border-border flex gap-2">
           <Button type="button" variant="ghost" onClick={onClose} style={{ flex: 1 }}>
             Cancelar
