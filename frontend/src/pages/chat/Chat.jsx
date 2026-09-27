@@ -3,6 +3,7 @@ import { Layout } from '../../components/layout/Layout.jsx'
 import { Card } from '../../components/ui/Card.jsx'
 import api from '../../services/api.js'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 const Message = ({ msg }) => {
   const isUser = msg.role === 'user'
@@ -22,6 +23,7 @@ const Message = ({ msg }) => {
           msg.content
         ) : (
           <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
             components={{
               p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
               strong: ({ children }) => <strong className="text-gold font-semibold">{children}</strong>,
@@ -30,6 +32,13 @@ const Message = ({ msg }) => {
               li: ({ children }) => <li className="text-white/90">{children}</li>,
               h3: ({ children }) => <h3 className="text-gold font-semibold mb-1 mt-2">{children}</h3>,
               code: ({ children }) => <code className="bg-black/30 px-1 py-0.5 rounded text-xs text-gold">{children}</code>,
+              table: ({ children }) => (
+                <div className="overflow-x-auto mb-2">
+                  <table className="w-full text-xs border-collapse">{children}</table>
+                </div>
+              ),
+              th: ({ children }) => <th className="border border-border px-2 py-1 text-gold font-semibold text-left bg-surface3">{children}</th>,
+              td: ({ children }) => <td className="border border-border px-2 py-1 text-white/90">{children}</td>,
             }}
           >
             {msg.content}
