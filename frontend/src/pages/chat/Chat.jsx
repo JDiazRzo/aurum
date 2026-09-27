@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Layout } from '../../components/layout/Layout.jsx'
 import { Card } from '../../components/ui/Card.jsx'
 import api from '../../services/api.js'
+import ReactMarkdown from 'react-markdown'
 
 const Message = ({ msg }) => {
   const isUser = msg.role === 'user'
@@ -12,12 +13,28 @@ const Message = ({ msg }) => {
           ◈
         </div>
       )}
-      <div className={`max-w-[75%] px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap ${
+      <div className={`max-w-[75%] px-3.5 py-2.5 text-sm leading-relaxed ${
         isUser
           ? 'bg-gold text-black rounded-[16px_16px_4px_16px]'
           : 'bg-surface2 border border-border text-white rounded-[16px_16px_16px_4px]'
       }`}>
-        {msg.content}
+        {isUser ? (
+          msg.content
+        ) : (
+          <ReactMarkdown
+            components={{
+              p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+              strong: ({ children }) => <strong className="text-gold font-semibold">{children}</strong>,
+              ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
+              ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
+              li: ({ children }) => <li className="text-white/90">{children}</li>,
+              h3: ({ children }) => <h3 className="text-gold font-semibold mb-1 mt-2">{children}</h3>,
+              code: ({ children }) => <code className="bg-black/30 px-1 py-0.5 rounded text-xs text-gold">{children}</code>,
+            }}
+          >
+            {msg.content}
+          </ReactMarkdown>
+        )}
       </div>
     </div>
   )
