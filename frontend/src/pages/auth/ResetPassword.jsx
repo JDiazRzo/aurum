@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../services/supabase.js'
 
@@ -8,7 +8,19 @@ export const ResetPassword = () => {
   const [loading,  setLoading]  = useState(false)
   const [error,    setError]    = useState('')
   const [success,  setSuccess]  = useState(false)
+  const [ready,    setReady]    = useState(false)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    // Supabase envía el token en el hash de la URL
+    // Hay que escuchar el evento PASSWORD_RECOVERY
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setReady(true)
+      }
+    })
+    return () => subscription.unsubscribe()
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -42,6 +54,10 @@ export const ResetPassword = () => {
             <div className="text-4xl mb-4">✅</div>
             <div className="text-white font-medium mb-2">Contraseña actualizada</div>
             <div className="text-sm text-muted">Redirigiendo al inicio de sesión...</div>
+          </div>
+        ) : !ready ? (
+          <div className="text-center">
+            <div className="text-sm text-muted">Verificando enlace...</div>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
