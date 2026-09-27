@@ -7,6 +7,11 @@ import { formatCOP, currentMonth, currentYear, MONTHS } from '../../utils/format
 
 const inputClass = "w-full bg-surface2 border border-border rounded-md px-3 py-2 text-sm text-white outline-none focus:border-gold"
 const selectClass = "w-full bg-surface2 border border-border rounded-md px-3 py-2 text-sm text-white outline-none focus:border-gold"
+const CATS_ICONS = {
+  'Alimentación':'🍔', 'Transporte':'🚗', 'Vivienda':'🏠',
+  'Salud':'❤️', 'Educación':'📚', 'Entretenimiento':'🎮',
+  'Ropa':'👕', 'Servicios':'⚡', 'Ahorros':'🐷', 'Otros':'⋯'
+}
 
 const ProgressBar = ({ value, max }) => {
   const pct = Math.min((value / max) * 100, 100)
