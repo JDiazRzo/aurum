@@ -71,6 +71,10 @@ export const Login = () => {
           <Link to="/register" className="text-gold no-underline hover:text-gold-light">
             Regístrate
           </Link>
+
+          <Link to="/forgot-password" className="text-center text-xs text-dim no-underline hover:text-muted block mt-1">
+            ¿Olvidaste tu contraseña?
+          </Link>
         </div>
       </div>
     </div>

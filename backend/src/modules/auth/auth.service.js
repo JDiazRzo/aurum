@@ -25,3 +25,15 @@ export const logoutUser = async () => {
   const { error } = await supabase.auth.signOut()
   if (error) throw new AppError(error.message, 400)
 }
+
+export const forgotPasswordUser = async (email) => {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.CLIENT_URL}/reset-password`
+  })
+  if (error) throw new AppError(error.message, 400)
+}
+
+export const resetPasswordUser = async (password) => {
+  const { error } = await supabase.auth.updateUser({ password })
+  if (error) throw new AppError(error.message, 400)
+}

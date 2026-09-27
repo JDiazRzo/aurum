@@ -6,6 +6,8 @@ import { Dashboard }    from './pages/dashboard/Dashboard.jsx'
 import { Transactions } from './pages/transactions/Transactions.jsx'
 import { Budgets }      from './pages/budgets/Budgets.jsx'
 import { Chat } from './pages/chat/Chat.jsx'
+import { ForgotPassword } from './pages/auth/ForgotPassword.jsx'
+import { ResetPassword }   from './pages/auth/ResetPassword.jsx'
 
 const PrivateRoute = ({ children }) => {
   const { profile, loading } = useAuth()
@@ -27,6 +29,8 @@ const App = () => (
       <Route path="/budgets"      element={<PrivateRoute><Budgets /></PrivateRoute>} />
       <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
       <Route path="*"             element={<Navigate to="/dashboard" replace />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password"  element={<ResetPassword />} />
     </Routes>
   </AuthProvider>
 )
