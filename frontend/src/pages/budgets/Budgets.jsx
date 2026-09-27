@@ -19,30 +19,47 @@ const ProgressBar = ({ value, max }) => {
 }
 
 const Modal = ({ title, onClose, onSave, limits, setLimits, isCreate, newBudget, setNewBudget, categories, formError }) => (
-  <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+  <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-end md:items-center justify-center z-50"
     onClick={e => e.target === e.currentTarget && onClose()}>
-    <div className="bg-surface2 border border-border rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-      <h2 className="font-display text-2xl font-semibold mb-6">{title}</h2>
-      <div className="flex flex-col gap-4">
+    <div className="w-full md:max-w-md bg-surface border border-border rounded-t-2xl md:rounded-2xl overflow-hidden" style={{ height: '520px' }}>
+      
+      {/* Header */}
+      <div className="p-5 pb-4 border-b border-border">
+        <div className="flex justify-between items-center">
+          <h2 className="font-display text-xl font-semibold">{title}</h2>
+          <button onClick={onClose} className="text-muted text-2xl bg-transparent border-none cursor-pointer hover:text-white leading-none">×</button>
+        </div>
+      </div>
+
+      {/* Contenido scrolleable */}
+      <div className="p-5 flex flex-col gap-4 overflow-y-auto" style={{ height: 'calc(520px - 130px)' }}>
         {isCreate && (
           <>
+            {/* Monto */}
             <div>
               <label className="text-xs text-muted mb-1.5 block">Monto total del mes</label>
-              <input type="number" placeholder="$0" className={inputClass}
-                value={newBudget.total_amount}
-                onChange={e => setNewBudget(p => ({ ...p, total_amount: e.target.value }))} />
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted font-display text-lg">$</span>
+                <input type="number" placeholder="0" className="w-full bg-surface2 border border-border rounded-xl pl-8 pr-4 py-3 text-xl font-display font-bold text-white outline-none focus:border-gold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  value={newBudget.total_amount}
+                  onChange={e => setNewBudget(p => ({ ...p, total_amount: e.target.value }))} />
+              </div>
             </div>
+
+            {/* Mes y año */}
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="text-xs text-muted mb-1.5 block">Mes</label>
-                <select className={selectClass} value={newBudget.month}
+                <select className="w-full bg-surface2 border border-border rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-gold"
+                  value={newBudget.month}
                   onChange={e => setNewBudget(p => ({ ...p, month: Number(e.target.value) }))}>
                   {MONTHS.map((m, i) => <option key={i+1} value={i+1}>{m}</option>)}
                 </select>
               </div>
               <div>
                 <label className="text-xs text-muted mb-1.5 block">Año</label>
-                <select className={selectClass} value={newBudget.year}
+                <select className="w-full bg-surface2 border border-border rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-gold"
+                  value={newBudget.year}
                   onChange={e => setNewBudget(p => ({ ...p, year: Number(e.target.value) }))}>
                   {[2025, 2026, 2027].map(y => <option key={y} value={y}>{y}</option>)}
                 </select>
@@ -50,33 +67,47 @@ const Modal = ({ title, onClose, onSave, limits, setLimits, isCreate, newBudget,
             </div>
           </>
         )}
+
+        {/* Límites por categoría */}
         <div>
-          <label className="text-xs text-muted mb-2 block">Límites por categoría {isCreate && '(opcional)'}</label>
+          <label className="text-xs text-muted mb-2 block">
+            Límites por categoría {isCreate && <span className="text-dim">(opcional)</span>}
+          </label>
           <div className="flex flex-col gap-2">
             {categories.length === 0 && (
-              <div className="text-xs text-dim">Cargando categorías...</div>
+              <div className="text-xs text-dim py-2">Cargando categorías...</div>
             )}
             {categories.map(cat => (
-              <div key={cat.id} className="flex items-center gap-2">
-                <span className="text-sm text-muted w-28 flex-shrink-0">{cat.name}</span>
-                <input type="number" placeholder="$0" className={inputClass}
-                  value={limits[cat.id] || ''}
-                  onChange={e => setLimits(p => ({ ...p, [cat.id]: e.target.value }))} />
+              <div key={cat.id} className="flex items-center gap-3 bg-surface2 border border-border rounded-xl px-4 py-2.5">
+                <span className="text-lg flex-shrink-0">{CATS_ICONS[cat.name] || '○'}</span>
+                <span className="text-sm text-muted flex-1">{cat.name}</span>
+                <div className="relative w-32">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-dim text-xs">$</span>
+                  <input type="number" placeholder="0"
+                    className="w-full bg-surface3 border border-border rounded-lg pl-5 pr-2 py-1.5 text-sm text-white outline-none focus:border-gold text-right [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    value={limits[cat.id] || ''}
+                    onChange={e => setLimits(p => ({ ...p, [cat.id]: e.target.value }))} />
+                </div>
               </div>
             ))}
           </div>
         </div>
-        {isCreate && formError && <div className="text-sm text-danger">{formError}</div>}
-        <div className="flex gap-2 mt-1">
-          <button onClick={onClose}
-            className="flex-1 py-2.5 rounded-md bg-transparent border border-border text-muted cursor-pointer hover:border-gold hover:text-gold transition-all">
-            Cancelar
-          </button>
-          <button onClick={onSave}
-            className="flex-[2] py-2.5 rounded-md bg-gold border-none text-black font-semibold cursor-pointer hover:bg-gold-light transition-all">
-            {isCreate ? 'Crear' : 'Guardar cambios'}
-          </button>
-        </div>
+
+        {isCreate && formError && (
+          <div className="text-sm text-danger text-center">{formError}</div>
+        )}
+      </div>
+
+      {/* Footer fijo */}
+      <div className="p-4 border-t border-border flex gap-2">
+        <button onClick={onClose}
+          className="flex-1 py-2.5 rounded-xl bg-transparent border border-border text-muted cursor-pointer hover:border-gold hover:text-gold transition-all text-sm">
+          Cancelar
+        </button>
+        <button onClick={onSave}
+          className="flex-[2] py-2.5 rounded-xl bg-gold border-none text-black font-semibold cursor-pointer hover:bg-gold-light transition-all text-sm">
+          {isCreate ? 'Crear presupuesto' : 'Guardar cambios'}
+        </button>
       </div>
     </div>
   </div>
