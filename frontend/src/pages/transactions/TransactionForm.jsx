@@ -42,7 +42,7 @@ export const TransactionForm = ({ onSubmit, onClose }) => {
       className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-end md:items-center justify-center z-50"
       onClick={e => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full md:max-w-md bg-surface border border-border rounded-t-2xl md:rounded-2xl overflow-hidden transition-none">
+      <div className="w-full md:max-w-md bg-surface border border-border rounded-t-2xl md:rounded-2xl overflow-hidden" style={{ height: '580px' }}>
         
         <div className={`p-5 pb-4 transition-colors duration-300 ${
           form.type === 'expense' ? 'bg-[#1a0808]' : 'bg-[#081a08]'
