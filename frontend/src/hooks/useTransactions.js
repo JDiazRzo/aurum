@@ -71,7 +71,7 @@ export const useStreak = () => {
 
   useEffect(() => {
     transactionService.streak()
-      .then(({ data }) => setStreak(data.data))
+      .then(({ data }) => setStreak(data.data?.streak ?? data.data ?? null))
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
