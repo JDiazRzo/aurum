@@ -48,6 +48,7 @@ export const transactionService = {
 export const budgetService = {
   getAll:     ()           => api.get('/budgets'),
   dashboard:  ()           => api.get('/budgets/dashboard'),
+  rebalance:  ()           => api.get('/budgets/rebalance'),
   getByMonth: (year, month)=> api.get(`/budgets/${year}/${month}`),
   create:     (data)       => api.post('/budgets', data),
   update:     (id, data)   => api.put(`/budgets/${id}`, data),

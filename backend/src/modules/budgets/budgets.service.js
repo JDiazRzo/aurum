@@ -149,6 +149,71 @@ export const deleteBudget = async (authUserId, id) => {
   if (error) throw new AppError(error.message, 400)
 }
 
+
+// Redistribución inteligente del presupuesto usando Isolation Forest
+export const getRebalanceSuggestion = async (authUserId) => {
+  const profileId = await getProfileId(authUserId)
+
+  const now           = new Date()
+  const month         = now.getMonth() + 1
+  const year          = now.getFullYear()
+  const daysInMonth   = new Date(year, month, 0).getDate()
+  const daysRemaining = daysInMonth - now.getDate()
+
+  // 1. Presupuesto del mes
+  let budget = null
+  try { budget = await getBudgetByMonth(authUserId, month, year) } catch { return null }
+  if (!budget) return null
+
+  // 2. Transacciones del mes (gastos)
+  const { data: txData } = await supabase
+    .from('transactions')
+    .select('id, amount, type, description, transaction_date, categories(name)')
+    .eq('user_id', profileId)
+    .eq('type', 'expense')
+    .gte('transaction_date', `${year}-${String(month).padStart(2,'0')}-01`)
+    .order('transaction_date', { ascending: false })
+
+  const transactions = (txData || []).map(t => ({
+    id:               t.id,
+    amount:           Number(t.amount),
+    type:             t.type,
+    description:      t.description || '',
+    category:         t.categories?.name || 'Sin categoría',
+    transaction_date: t.transaction_date
+  }))
+
+  // 3. Categorías del presupuesto
+  const budgetCategories = (budget.budget_categories || []).map(bc => ({
+    id:            bc.id,
+    category_id:   bc.category_id,
+    category_name: bc.categories?.name || 'Sin categoría',
+    limit_amount:  Number(bc.limit_amount),
+    spent_amount:  Number(bc.spent_amount)
+  }))
+
+  // 4. Llamar al microservicio Python
+  try {
+    const response = await fetch(
+      `${process.env.PYTHON_SERVICE_URL || 'http://localhost:8000'}/rebalance`,
+      {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          transactions,
+          budget_categories: budgetCategories,
+          days_remaining:    daysRemaining,
+          total_budget:      Number(budget.total_amount)
+        })
+      }
+    )
+    const result = await response.json()
+    return result
+  } catch {
+    return null
+  }
+}
+
 // Resumen rápido del presupuesto del mes actual para el dashboard
 export const getDashboardBudget = async (authUserId) => {
   const now   = new Date()

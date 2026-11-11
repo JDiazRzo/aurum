@@ -92,3 +92,17 @@ export const useBudgetDashboard = () => {
 
   return { budget, loading }
 }
+
+export const useRebalance = () => {
+  const [rebalance, setRebalance] = useState(null)
+  const [loading,   setLoading]   = useState(true)
+
+  useEffect(() => {
+    budgetService.rebalance()
+      .then(({ data }) => setRebalance(data.data))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  return { rebalance, loading }
+}

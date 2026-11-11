@@ -43,3 +43,10 @@ export const getDashboard = async (req, res, next) => {
     successResponse(res, data)
   } catch (err) { next(err) }
 }
+
+export const getRebalance = async (req, res, next) => {
+  try {
+    const data = await getRebalanceSuggestion(req.user.id)
+    res.json({ success: true, data })
+  } catch (err) { next(err) }
+}

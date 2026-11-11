@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { Layout } from '../../components/layout/Layout.jsx'
+import { RebalanceCard } from '../../components/dashboard/RebalanceCard.jsx'
 import { DashboardSkeleton } from '../../components/ui/Skeleton.jsx'
 import { Card } from '../../components/ui/Card.jsx'
 import { Badge } from '../../components/ui/Badge.jsx'
 import { ImportTransactions } from '../../components/dashboard/ImportTransactions.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
-import { useSummary, useTransactions, useMonthlyTrend, useStreak, useBudgetDashboard } from '../../hooks/useTransactions.js'
+import { useSummary, useTransactions, useMonthlyTrend, useStreak, useBudgetDashboard, useRebalance } from '../../hooks/useTransactions.js'
 import { transactionService, budgetService } from '../../services/api.js'
 import { formatCOP, formatDate, currentMonth, currentYear, MONTHS } from '../../utils/format.js'
 
@@ -27,6 +28,7 @@ export const Dashboard = () => {
   const { trend } = useMonthlyTrend(6)
   const { streak } = useStreak()
   const { budget } = useBudgetDashboard()
+  const { rebalance } = useRebalance()
   const { transactions, refetch: refetchTransactions } = useTransactions({ month, year, limit: 5 })
   const [anomalies,       setAnomalies]       = useState([])
   const [recurringNext,   setRecurringNext]   = useState(null)
@@ -364,7 +366,6 @@ export const Dashboard = () => {
           {streak !== null ? (
             <>
               <div className="flex items-end gap-2 mb-1">
-                <span className="text-3xl">🔥</span>
                 <span className="font-display text-4xl font-bold text-gold">
                   {streak}
                 </span>
@@ -386,6 +387,11 @@ export const Dashboard = () => {
         </Card>
 
 
+      </div>
+
+      {/* ── Análisis Isolation Forest ───── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+        <RebalanceCard rebalance={rebalance} />
       </div>
 
     </Layout>
