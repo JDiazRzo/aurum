@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { TransactionsSkeleton } from '../../components/ui/Skeleton.jsx'
 import { Layout } from '../../components/layout/Layout.jsx'
 import { Card } from '../../components/ui/Card.jsx'
 import { Button } from '../../components/ui/Button.jsx'
@@ -16,6 +17,8 @@ export const Transactions = () => {
     await create(payload)
     setShowForm(false)
   }
+
+  if (loading && transactions.length === 0) return <Layout><TransactionsSkeleton /></Layout>
 
   return (
     <Layout>
@@ -58,9 +61,7 @@ export const Transactions = () => {
 
 
       <div className="fade-up-3 flex flex-col gap-2">
-        {loading && (
-          <div className="text-center text-dim py-8">Cargando...</div>
-        )}
+
         {!loading && transactions.length === 0 && (
           <Card className="text-center py-12">
             <div className="text-dim">Sin movimientos para este período.</div>

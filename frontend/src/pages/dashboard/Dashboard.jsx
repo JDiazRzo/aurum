@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { Layout } from '../../components/layout/Layout.jsx'
+import { DashboardSkeleton } from '../../components/ui/Skeleton.jsx'
 import { Card } from '../../components/ui/Card.jsx'
 import { Badge } from '../../components/ui/Badge.jsx'
 import { ImportTransactions } from '../../components/dashboard/ImportTransactions.jsx'
@@ -22,7 +23,7 @@ export const Dashboard = () => {
   const { profile }   = useAuth()
   const month         = currentMonth()
   const year          = currentYear()
-  const { summary, refetch: refetchSummary } = useSummary(month, year)
+  const { summary, loading: summaryLoading, refetch: refetchSummary } = useSummary(month, year)
   const { trend } = useMonthlyTrend(6)
   const { streak } = useStreak()
   const { budget } = useBudgetDashboard()
@@ -86,6 +87,12 @@ export const Dashboard = () => {
   const expensePct = (prevMonth?.expense > 0 && expenseDiff !== null)
     ? Math.round((expenseDiff / prevMonth.expense) * 100)
     : null
+
+  if (summaryLoading) return (
+    <Layout>
+      <DashboardSkeleton />
+    </Layout>
+  )
 
   return (
     <Layout>
@@ -374,7 +381,7 @@ export const Dashboard = () => {
               </p>
             </>
           ) : (
-            <p className="text-sm text-dim py-2">Cargando racha...</p>
+            <p className="text-sm text-dim py-2">—</p>
           )}
         </Card>
 

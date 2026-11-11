@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { BudgetsSkeleton } from '../../components/ui/Skeleton.jsx'
 import { Layout } from '../../components/layout/Layout.jsx'
 import { Card } from '../../components/ui/Card.jsx'
 import { Button } from '../../components/ui/Button.jsx'
@@ -190,7 +191,7 @@ export const Budgets = () => {
     } catch (err) { console.error(err) }
   }
 
-  if (loading) return <Layout><div className="text-dim p-8">Cargando...</div></Layout>
+  if (loading) return <Layout><BudgetsSkeleton /></Layout>
 
   return (
     <Layout>
