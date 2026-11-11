@@ -1,0 +1,49 @@
+fecha,descripcion,monto,tipo,categoria
+2026-05-02,Mercado Éxito,165000,gasto,Alimentación
+2026-05-05,Transmilenio recarga,80000,gasto,Transporte
+2026-05-08,Netflix,47900,gasto,Entretenimiento
+2026-05-10,Salario mayo,3000000,ingreso,
+2026-05-12,Farmacia Colsubsidio,38000,gasto,Salud
+2026-05-15,Restaurante El Corral,42000,gasto,Alimentación
+2026-05-18,Uber,18000,gasto,Transporte
+2026-05-20,Spotify,16900,gasto,Entretenimiento
+2026-05-22,Supermercado Carulla,195000,gasto,Alimentación
+2026-05-25,Gym mensualidad,120000,gasto,Salud
+2026-05-28,Rappi domicilio,38000,gasto,Alimentación
+2026-05-30,Arriendo junio,900000,gasto,Otros
+2026-06-02,Mercado D1,88000,gasto,Alimentación
+2026-06-05,Transmilenio recarga,80000,gasto,Transporte
+2026-06-08,Netflix,47900,gasto,Entretenimiento
+2026-06-10,Salario junio,3000000,ingreso,
+2026-06-12,Almuerzo oficina,16000,gasto,Alimentación
+2026-06-15,Farmacia Cruz Verde,24000,gasto,Salud
+2026-06-18,Uber,21000,gasto,Transporte
+2026-06-20,Libro técnico,55000,gasto,Educación
+2026-06-22,Rappi domicilio,41000,gasto,Alimentación
+2026-06-25,Gym mensualidad,120000,gasto,Salud
+2026-06-27,Restaurante La Masa,36000,gasto,Alimentación
+2026-06-30,Arriendo julio,900000,gasto,Otros
+2026-07-02,Mercado Éxito,172000,gasto,Alimentación
+2026-07-05,Transmilenio recarga,80000,gasto,Transporte
+2026-07-08,Netflix,47900,gasto,Entretenimiento
+2026-07-10,Salario julio,3000000,ingreso,
+2026-07-12,Farmacia Colsubsidio,45000,gasto,Salud
+2026-07-15,Restaurante El Corral,35000,gasto,Alimentación
+2026-07-18,Uber,25000,gasto,Transporte
+2026-07-20,Spotify,16900,gasto,Entretenimiento
+2026-07-22,Supermercado Carulla,205000,gasto,Alimentación
+2026-07-25,Gym mensualidad,120000,gasto,Salud
+2026-07-28,Rappi domicilio,44000,gasto,Alimentación
+2026-07-30,Arriendo agosto,900000,gasto,Otros
+2026-08-02,Mercado D1,92000,gasto,Alimentación
+2026-08-05,Transmilenio recarga,80000,gasto,Transporte
+2026-08-08,Netflix,47900,gasto,Entretenimiento
+2026-08-10,Salario agosto,3000000,ingreso,
+2026-08-12,Almuerzo oficina,19000,gasto,Alimentación
+2026-08-15,Farmacia Cruz Verde,31000,gasto,Salud
+2026-08-18,Uber,22000,gasto,Transporte
+2026-08-20,Ropa Zara,165000,gasto,Ropa
+2026-08-22,Rappi domicilio,48000,gasto,Alimentación
+2026-08-25,Gym mensualidad,120000,gasto,Salud
+2026-08-27,Cinema Cinemark,28000,gasto,Entretenimiento
+2026-08-30,Arriendo septiembre,900000,gasto,Otros

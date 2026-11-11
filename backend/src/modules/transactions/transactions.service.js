@@ -262,24 +262,64 @@ export const getAnomalies = async (authUserId) => {
   }
 }
 
-// ── Próximo gasto recurrente ──────────────────────────────────
+// ── Próximo gasto recurrente (detección automática) ─────────
 export const getRecurringNext = async (authUserId) => {
   const profileId = await getProfileId(authUserId)
 
-  const today = new Date().toISOString().split('T')[0]
+  // Últimos 90 días de gastos
+  const from = new Date()
+  from.setDate(from.getDate() - 90)
+  const fromStr = from.toISOString().split('T')[0]
 
   const { data, error } = await supabase
-    .from('recurring_expenses')
-    .select('id, name, amount, frequency, next_due_date')
+    .from('transactions')
+    .select('description, amount, transaction_date')
     .eq('user_id', profileId)
-    .eq('is_active', true)
-    .gte('next_due_date', today)
-    .order('next_due_date', { ascending: true })
-    .limit(1)
-    .single()
+    .eq('type', 'expense')
+    .gte('transaction_date', fromStr)
+    .order('transaction_date', { ascending: false })
 
-  if (error) return null
-  return data
+  if (error || !data.length) return null
+
+  // Agrupar por descripción normalizada
+  const groups = {}
+  for (const tx of data) {
+    const key = tx.description?.toLowerCase().trim() || 'sin descripción'
+    if (!groups[key]) groups[key] = []
+    groups[key].push({ amount: Number(tx.amount), date: tx.transaction_date })
+  }
+
+  // Filtrar los que aparecen en ≥2 meses distintos con monto similar (±20%)
+  const candidates = []
+  for (const [desc, txs] of Object.entries(groups)) {
+    if (txs.length < 2) continue
+
+    const months = new Set(txs.map(t => t.date.slice(0, 7)))
+    if (months.size < 2) continue
+
+    const amounts = txs.map(t => t.amount)
+    const avgAmount = amounts.reduce((a, b) => a + b, 0) / amounts.length
+    const allSimilar = amounts.every(a => Math.abs(a - avgAmount) / avgAmount <= 0.2)
+    if (!allSimilar) continue
+
+    // Estimar próxima fecha: día del mes de la última ocurrencia + 30 días
+    const lastDate = new Date(txs[0].date + 'T00:00:00Z')
+    const nextDate = new Date(lastDate)
+    nextDate.setMonth(nextDate.getMonth() + 1)
+
+    candidates.push({
+      name:          desc.charAt(0).toUpperCase() + desc.slice(1),
+      amount:        Math.round(avgAmount),
+      next_due_date: nextDate.toISOString().split('T')[0],
+      frequency:     'monthly'
+    })
+  }
+
+  if (!candidates.length) return null
+
+  // Devolver el que vence más pronto
+  candidates.sort((a, b) => a.next_due_date.localeCompare(b.next_due_date))
+  return candidates[0]
 }
 
 // ── Tendencia de los últimos N meses ─────────────────────────
