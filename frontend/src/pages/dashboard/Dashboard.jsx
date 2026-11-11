@@ -5,7 +5,6 @@ import { RebalanceCard } from '../../components/dashboard/RebalanceCard.jsx'
 import { DashboardSkeleton } from '../../components/ui/Skeleton.jsx'
 import { Card } from '../../components/ui/Card.jsx'
 import { Badge } from '../../components/ui/Badge.jsx'
-import { ImportTransactions } from '../../components/dashboard/ImportTransactions.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { useSummary, useTransactions, useMonthlyTrend, useStreak, useBudgetDashboard, useRebalance } from '../../hooks/useTransactions.js'
 import { transactionService, budgetService } from '../../services/api.js'
@@ -107,9 +106,6 @@ export const Dashboard = () => {
         <div className="text-sm text-muted mt-1">{MONTHS[month - 1]} {year}</div>
       </div>
 
-      <ImportTransactions onImported={refreshDashboard} />
-
-   
       <Card className="fade-up-1 mb-6 relative overflow-hidden">
         <div className="absolute -top-10 -right-10 w-36 h-36 rounded-full bg-gold opacity-[0.03]" />
         <div className="text-xs text-dim tracking-[1px] mb-2">BALANCE DEL MES</div>

@@ -1,0 +1,33 @@
+fecha,descripcion,monto,tipo,categoria
+2026-09-02,Mercado Éxito,185000,gasto,Alimentación
+2026-09-05,Transmilenio recarga,80000,gasto,Transporte
+2026-09-08,Netflix,47900,gasto,Entretenimiento
+2026-09-10,Salario septiembre,3000000,ingreso,
+2026-09-12,Farmacia Colsubsidio,52000,gasto,Salud
+2026-09-15,Restaurante El Corral,38000,gasto,Alimentación
+2026-09-18,Uber,22000,gasto,Transporte
+2026-09-20,Spotify,16900,gasto,Entretenimiento
+2026-09-22,Supermercado Carulla,210000,gasto,Alimentación
+2026-09-25,Gym mensualidad,120000,gasto,Salud
+2026-09-28,Rappi domicilio,45000,gasto,Alimentación
+2026-09-30,Arriendo octubre,900000,gasto,Otros
+2026-10-01,Mercado D1,95000,gasto,Alimentación
+2026-10-03,Transmilenio recarga,80000,gasto,Transporte
+2026-10-05,Cinema Cinemark,32000,gasto,Entretenimiento
+2026-10-08,Salario octubre,3000000,ingreso,
+2026-10-10,Almuerzo oficina,18000,gasto,Alimentación
+2026-10-12,Farmacia Cruz Verde,28000,gasto,Salud
+2026-10-15,Uber,19000,gasto,Transporte
+2026-10-17,Amazon compra,145000,gasto,Otros
+2026-10-20,Rappi domicilio,52000,gasto,Alimentación
+2026-10-22,Libro técnico,65000,gasto,Educación
+2026-10-25,Restaurante La Masa,42000,gasto,Alimentación
+2026-10-28,Ropa Zara,180000,gasto,Ropa
+2026-10-30,Arriendo noviembre,900000,gasto,Otros
+2026-11-01,Mercado Éxito,172000,gasto,Alimentación
+2026-11-03,Transmilenio recarga,80000,gasto,Transporte
+2026-11-05,Netflix,47900,gasto,Entretenimiento
+2026-11-07,Salario noviembre,3000000,ingreso,
+2026-11-08,Restaurante Crepes,55000,gasto,Alimentación
+2026-11-09,Farmacia,35000,gasto,Salud
+2026-11-10,Uber,24000,gasto,Transporte

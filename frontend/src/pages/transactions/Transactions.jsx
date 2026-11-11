@@ -7,11 +7,12 @@ import { Badge } from '../../components/ui/Badge.jsx'
 import { useTransactions } from '../../hooks/useTransactions.js'
 import { formatCOP, formatDate, currentMonth, currentYear, MONTHS } from '../../utils/format.js'
 import { TransactionForm } from './TransactionForm.jsx'
+import { ImportTransactions } from '../../components/dashboard/ImportTransactions.jsx'
 
 export const Transactions = () => {
   const [showForm, setShowForm] = useState(false)
   const [filter,   setFilter]   = useState({ month: currentMonth(), year: currentYear() })
-  const { transactions, loading, create, remove } = useTransactions(filter)
+  const { transactions, loading, create, remove, refetch } = useTransactions(filter)
 
   const handleCreate = async (payload) => {
     await create(payload)
@@ -59,6 +60,8 @@ export const Transactions = () => {
         </select>
       </Card>
 
+
+      <ImportTransactions onImported={refetch} />
 
       <div className="fade-up-3 flex flex-col gap-2">
 
