@@ -36,3 +36,10 @@ export const remove = async (req, res, next) => {
     successResponse(res, null, 'Presupuesto eliminado')
   } catch (err) { next(err) }
 }
+
+export const getDashboard = async (req, res, next) => {
+  try {
+    const data = await service.getDashboardBudget(req.user.id)
+    successResponse(res, data)
+  } catch (err) { next(err) }
+}

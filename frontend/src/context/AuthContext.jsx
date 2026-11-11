@@ -48,8 +48,14 @@ export const AuthProvider = ({ children }) => {
     setProfile(null)
   }
 
+  const needsHabeasData = profile !== null && !profile.habeas_data_accepted_at
+
+  const acceptHabeasData = () => {
+    setProfile(prev => ({ ...prev, habeas_data_accepted_at: new Date().toISOString() }))
+  }
+
   return (
-    <AuthContext.Provider value={{ user, profile, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, profile, loading, login, register, logout, needsHabeasData, acceptHabeasData }}>
       {children}
     </AuthContext.Provider>
   )

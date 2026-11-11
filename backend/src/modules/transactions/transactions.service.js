@@ -261,3 +261,95 @@ export const getAnomalies = async (authUserId) => {
       .map(t => ({ ...t, reason: `Monto ${(Number(t.amount) / avg).toFixed(1)}x mayor al promedio` }))
   }
 }
+
+// ── Próximo gasto recurrente ──────────────────────────────────
+export const getRecurringNext = async (authUserId) => {
+  const profileId = await getProfileId(authUserId)
+
+  const today = new Date().toISOString().split('T')[0]
+
+  const { data, error } = await supabase
+    .from('recurring_expenses')
+    .select('id, name, amount, frequency, next_due_date')
+    .eq('user_id', profileId)
+    .eq('is_active', true)
+    .gte('next_due_date', today)
+    .order('next_due_date', { ascending: true })
+    .limit(1)
+    .single()
+
+  if (error) return null
+  return data
+}
+
+// ── Tendencia de los últimos N meses ─────────────────────────
+export const getMonthlyTrend = async (authUserId, months = 6) => {
+  const profileId = await getProfileId(authUserId)
+
+  const now   = new Date()
+  const results = []
+
+  for (let i = months - 1; i >= 0; i--) {
+    const d     = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    const month = d.getMonth() + 1
+    const year  = d.getFullYear()
+    const from  = `${year}-${String(month).padStart(2, '0')}-01`
+    const to    = new Date(year, month, 0).toISOString().split('T')[0]
+
+    const { data, error } = await supabase
+      .from('transactions')
+      .select('amount, type')
+      .eq('user_id', profileId)
+      .gte('transaction_date', from)
+      .lte('transaction_date', to)
+
+    if (error) continue
+
+    const income  = data.filter(t => t.type === 'income').reduce((s, t) => s + Number(t.amount), 0)
+    const expense = data.filter(t => t.type === 'expense').reduce((s, t) => s + Number(t.amount), 0)
+
+    results.push({ month, year, label: `${String(month).padStart(2,'0')}/${year}`, income, expense, balance: income - expense })
+  }
+
+  return results
+}
+
+// ── Racha de días consecutivos con registro ──────────────────
+export const getStreak = async (authUserId) => {
+  const profileId = await getProfileId(authUserId)
+
+  const { data, error } = await supabase
+    .from('transactions')
+    .select('transaction_date')
+    .eq('user_id', profileId)
+    .order('transaction_date', { ascending: false })
+    .limit(90)
+
+  if (error || !data.length) return { streak: 0, last_date: null }
+
+  // Conjunto de fechas únicas (string YYYY-MM-DD)
+  const dates = [...new Set(data.map(t => t.transaction_date))].sort().reverse()
+
+  let streak = 0
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  for (let i = 0; i < dates.length; i++) {
+    const expected = new Date(today)
+    expected.setDate(today.getDate() - i)
+    const expectedStr = expected.toISOString().split('T')[0]
+    if (dates[i] === expectedStr) {
+      streak++
+    } else {
+      // Tolerar hoy sin registro si ayer tenía
+      if (i === 0 && dates[0] !== expectedStr) {
+        const yesterday = new Date(today)
+        yesterday.setDate(today.getDate() - 1)
+        if (dates[0] === yesterday.toISOString().split('T')[0]) continue
+      }
+      break
+    }
+  }
+
+  return { streak, last_date: dates[0] }
+}

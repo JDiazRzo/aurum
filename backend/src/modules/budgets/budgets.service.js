@@ -148,3 +148,15 @@ export const deleteBudget = async (authUserId, id) => {
 
   if (error) throw new AppError(error.message, 400)
 }
+
+// Resumen rápido del presupuesto del mes actual para el dashboard
+export const getDashboardBudget = async (authUserId) => {
+  const now   = new Date()
+  const month = now.getMonth() + 1
+  const year  = now.getFullYear()
+  try {
+    return await getBudgetByMonth(authUserId, month, year)
+  } catch {
+    return null  // Si no tiene presupuesto este mes, devuelve null
+  }
+}

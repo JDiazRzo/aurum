@@ -40,11 +40,14 @@ export const transactionService = {
   remove:     (id)           => api.delete(`/transactions/${id}`),
   summary:    (params)       => api.get('/transactions/summary', { params }),
   anomalies:  ()             => api.get('/transactions/anomalies'),
+  trend:      (params)       => api.get('/transactions/trend', { params }),
+  streak:     ()             => api.get('/transactions/streak'),
   categorize: (id, category_id) => api.patch(`/transactions/${id}/category`, { category_id }),
 }
 
 export const budgetService = {
   getAll:     ()           => api.get('/budgets'),
+  dashboard:  ()           => api.get('/budgets/dashboard'),
   getByMonth: (year, month)=> api.get(`/budgets/${year}/${month}`),
   create:     (data)       => api.post('/budgets', data),
   update:     (id, data)   => api.put(`/budgets/${id}`, data),
@@ -59,7 +62,8 @@ export const categoryService = {
 }
 
 export const profileService = {
-  getMe:    ()     => api.get('/profiles/me'),
-  updateMe: (data) => api.put('/profiles/me', data),
+  getMe:           ()     => api.get('/profiles/me'),
+  updateMe:        (data) => api.put('/profiles/me', data),
+  acceptHabeasData:()     => api.patch('/profiles/me/habeas-data'),
 }
 

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { transactionService } from '../services/api.js'
+import { transactionService, budgetService } from '../services/api.js'
 
 export const useTransactions = (filters = {}) => {
   const [transactions, setTransactions] = useState([])
@@ -48,4 +48,47 @@ export const useSummary = (month, year) => {
   useEffect(() => { fetch() }, [fetch])
 
   return { summary, loading, refetch: fetch }
+}
+
+export const useMonthlyTrend = (months = 6) => {
+  const [trend,   setTrend]   = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    setLoading(true)
+    transactionService.trend({ months })
+      .then(({ data }) => setTrend(data.data || []))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [months])
+
+  return { trend, loading }
+}
+
+export const useStreak = () => {
+  const [streak,  setStreak]  = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    transactionService.streak()
+      .then(({ data }) => setStreak(data.data))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  return { streak, loading }
+}
+
+export const useBudgetDashboard = () => {
+  const [budget,  setBudget]  = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    budgetService.dashboard()
+      .then(({ data }) => setBudget(data.data))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  return { budget, loading }
 }

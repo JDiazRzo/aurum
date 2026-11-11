@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { HabeasDataModal } from './components/auth/HabeasDataModal.jsx'
 import { AuthProvider, useAuth } from './context/AuthContext.jsx'
 import { Login }        from './pages/auth/Login.jsx'
 import { Register }     from './pages/auth/Register.jsx'
@@ -10,13 +11,19 @@ import { ForgotPassword } from './pages/auth/ForgotPassword.jsx'
 import { ResetPassword }   from './pages/auth/ResetPassword.jsx'
 
 const PrivateRoute = ({ children }) => {
-  const { profile, loading } = useAuth()
+  const { profile, loading, needsHabeasData, acceptHabeasData } = useAuth()
   if (loading) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--black)' }}>
       <div style={{ fontFamily: 'var(--font-display)', fontSize: 32, color: 'var(--gold)', letterSpacing: 4 }}>AURUM</div>
     </div>
   )
-  return profile ? children : <Navigate to="/login" replace />
+  if (!profile) return <Navigate to="/login" replace />
+  return (
+    <>
+      {needsHabeasData && <HabeasDataModal onAccept={acceptHabeasData} />}
+      {children}
+    </>
+  )
 }
 
 const App = () => (

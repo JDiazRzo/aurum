@@ -66,3 +66,25 @@ export const anomalies = async (req, res, next) => {
     successResponse(res, data)
   } catch (err) { next(err) }
 }
+
+export const recurringNext = async (req, res, next) => {
+  try {
+    const data = await service.getRecurringNext(req.user.id)
+    successResponse(res, data)
+  } catch (err) { next(err) }
+}
+
+export const trend = async (req, res, next) => {
+  try {
+    const months = Number(req.query.months) || 6
+    const data   = await service.getMonthlyTrend(req.user.id, months)
+    successResponse(res, data)
+  } catch (err) { next(err) }
+}
+
+export const streak = async (req, res, next) => {
+  try {
+    const data = await service.getStreak(req.user.id)
+    successResponse(res, data)
+  } catch (err) { next(err) }
+}

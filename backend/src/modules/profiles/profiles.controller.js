@@ -14,3 +14,10 @@ export const updateMe = async (req, res, next) => {
     successResponse(res, data, 'Perfil actualizado')
   } catch (err) { next(err) }
 }
+
+export const acceptHabeasData = async (req, res, next) => {
+  try {
+    const data = await service.acceptHabeasData(req.user.id)
+    successResponse(res, data, 'Tratamiento de datos aceptado')
+  } catch (err) { next(err) }
+}
