@@ -334,20 +334,21 @@ export const getStreak = async (authUserId) => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  for (let i = 0; i < dates.length; i++) {
-    const expected = new Date(today)
-    expected.setDate(today.getDate() - i)
-    const expectedStr = expected.toISOString().split('T')[0]
-    if (dates[i] === expectedStr) {
-      streak++
-    } else {
-      // Tolerar hoy sin registro si ayer tenía
-      if (i === 0 && dates[0] !== expectedStr) {
-        const yesterday = new Date(today)
-        yesterday.setDate(today.getDate() - 1)
-        if (dates[0] === yesterday.toISOString().split('T')[0]) continue
+  // Offset de inicio: si hoy no tiene registro, empezar desde ayer
+  const todayStr     = today.toISOString().split('T')[0]
+  const yesterdayStr = new Date(today.getTime() - 86400000).toISOString().split('T')[0]
+  const startOffset  = dates[0] === todayStr ? 0 : dates[0] === yesterdayStr ? 1 : null
+
+  if (startOffset !== null) {
+    for (let i = 0; i < dates.length; i++) {
+      const expected = new Date(today)
+      expected.setDate(today.getDate() - (i + startOffset))
+      const expectedStr = expected.toISOString().split('T')[0]
+      if (dates[i] === expectedStr) {
+        streak++
+      } else {
+        break
       }
-      break
     }
   }
 
