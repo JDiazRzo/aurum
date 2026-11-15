@@ -13,12 +13,14 @@ const RiskGauge = ({ score }) => {
   )
 }
 
-export const RebalanceCard = ({ rebalance }) => {
+export const RebalanceCard = ({ rebalance, noBudget }) => {
   if (!rebalance) return (
     <Card className="md:col-span-2 lg:col-span-3">
       <div className="text-xs text-dim tracking-[1px] mb-2">ANÁLISIS DE PATRÓN</div>
       <p className="text-sm text-dim py-2">
-        Crea un presupuesto este mes para activar el análisis inteligente
+        {noBudget
+          ? 'Crea un presupuesto este mes para activar el análisis inteligente'
+          : 'El análisis de patrón no está disponible en este momento'}
       </p>
     </Card>
   )

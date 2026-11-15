@@ -46,7 +46,10 @@ export const getDashboard = async (req, res, next) => {
 
 export const getRebalance = async (req, res, next) => {
   try {
-    const data = await service.getRebalanceSuggestion(req.user.id)
-    res.json({ success: true, data })
+    const result = await service.getRebalanceSuggestion(req.user.id)
+    if (result && result.no_budget) {
+      return res.json({ success: true, data: null, no_budget: true })
+    }
+    res.json({ success: true, data: result })
   } catch (err) { next(err) }
 }

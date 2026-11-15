@@ -162,10 +162,16 @@ export const getRebalanceSuggestion = async (authUserId) => {
 
   // 1. Presupuesto del mes
   let budget = null
-  try { budget = await getBudgetByMonth(authUserId, month, year) } catch { return null }
-  if (!budget) return null
+  try {
+    budget = await getBudgetByMonth(authUserId, month, year)
+  } catch (err) {
+    console.error('[rebalance] No se encontró presupuesto:', err?.message)
+    return { no_budget: true }
+  }
+  if (!budget) return { no_budget: true }
 
   // 2. Transacciones del mes (gastos)
+  console.log('[rebalance] Presupuesto encontrado, llamando a Python...')
   const { data: txData } = await supabase
     .from('transactions')
     .select('id, amount, type, description, transaction_date, categories(name)')
@@ -193,9 +199,11 @@ export const getRebalanceSuggestion = async (authUserId) => {
   }))
 
   // 4. Llamar al microservicio Python
+  const pythonUrl = process.env.PYTHON_SERVICE_URL || 'http://localhost:8000'
+  console.log(`[rebalance] Llamando Python en ${pythonUrl}/rebalance con ${transactions.length} transacciones`)
   try {
     const response = await fetch(
-      `${process.env.PYTHON_SERVICE_URL || 'http://localhost:8000'}/rebalance`,
+      `${pythonUrl}/rebalance`,
       {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -208,8 +216,10 @@ export const getRebalanceSuggestion = async (authUserId) => {
       }
     )
     const result = await response.json()
+    console.log('[rebalance] Respuesta Python:', JSON.stringify(result).slice(0, 200))
     return result
-  } catch {
+  } catch (err) {
+    console.error('[rebalance] Error llamando a Python:', err?.message)
     return null
   }
 }

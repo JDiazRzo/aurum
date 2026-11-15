@@ -45,8 +45,8 @@ def detect_anomalies(transactions: list[dict]) -> list[dict]:
 
     scores = model.score_samples(features)
     # Agregar al dataframe
-    df['is_anomaly'] = predictions == -1
-    df['anomaly_score'] = scores
+    df.loc[:, 'is_anomaly']    = predictions == -1
+    df.loc[:, 'anomaly_score'] = scores
 
     # Filtrar las anómalas y construir respuesta
     anomalies = []
@@ -105,8 +105,8 @@ def analyze_month_risk(transactions: list[dict]) -> dict:
     scores = model.score_samples(features)
     predictions = model.predict(features)
 
-    df['anomaly_score'] = scores
-    df['is_anomaly']    = predictions == -1
+    df.loc[:, 'anomaly_score'] = scores
+    df.loc[:, 'is_anomaly']    = predictions == -1
 
     # Normalizar a 0-100: -0.7 → 0 (máximo riesgo), 0.1 → 100 (normal)
     min_score, max_score = -0.7, 0.1

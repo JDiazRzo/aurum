@@ -27,7 +27,7 @@ export const Dashboard = () => {
   const { trend } = useMonthlyTrend(6)
   const { streak } = useStreak()
   const { budget } = useBudgetDashboard()
-  const { rebalance } = useRebalance()
+  const { rebalance, noBudget } = useRebalance()
   const { transactions, refetch: refetchTransactions } = useTransactions({ month, year, limit: 5 })
   const [anomalies,       setAnomalies]       = useState([])
   const [recurringNext,   setRecurringNext]   = useState(null)
@@ -387,7 +387,7 @@ export const Dashboard = () => {
 
       {/* ── Análisis Isolation Forest ───── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-        <RebalanceCard rebalance={rebalance} />
+        <RebalanceCard rebalance={rebalance} noBudget={noBudget} />
       </div>
 
     </Layout>
